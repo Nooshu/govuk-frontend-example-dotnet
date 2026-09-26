@@ -2,7 +2,8 @@
   "name": "govuk-frontend-example",
   "version": "0.0.0",
   "private": true,
-  "description": "Base template for GDS-compliant frontends using GOV.UK Frontend (wrapper language TBD). Node tooling for docs hygiene and future govuk-frontend pin.",
+  "description": "Base template for GDS-compliant frontends using GOV.UK Frontend (wrapper language TBD). Shared baseline for frontend performance and OWASP response headers, plus Node tooling for docs hygiene.",
+  "type": "module",
   "engines": {
     "node": ">=22"
   },
@@ -10,7 +11,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:md": "markdownlint-cli2",
-    "verify:docs": "npm run format:check && npm run lint:md"
+    "test": "node --test --experimental-test-coverage --test-coverage-include='baseline/**/*.mjs' --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100",
+    "verify:docs": "npm run format:check && npm run lint:md",
+    "verify": "npm run verify:docs && npm test"
   },
   "devDependencies": {
     "markdownlint-cli2": "0.23.3",
