@@ -15,7 +15,11 @@ The _example implementation_ language and its 2026 best-practice templating / co
 
 Until an implementation language is recorded here: do not invent wrapper-specific paths, package managers, or framework idioms.
 
-Once recorded: follow **that language’s current best practices** for project layout, typing, modules, testing, packaging, and CI — while honouring Frontend’s Nunjucks/fixture contract in [`AGENTS.md`](../AGENTS.md). **Prefer Nunjucks macros** for component HTML where the stack allows (e.g. Node/TypeScript calling `govuk-frontend` macros directly). If the language cannot call Nunjucks, implement thin renderers that stay byte-for-byte with fixtures — still do **not** maintain hand-copied HTML dumps from each release.
+Once recorded: **every** feature request and code change must follow **that language’s latest best practices** for project layout, typing, modules, testing, packaging, and CI — while honouring Frontend’s Nunjucks/fixture contract in [`AGENTS.md`](../AGENTS.md). Prefer current stable idioms for the recorded major version over outdated tutorials. **Prefer Nunjucks macros** for component HTML where the stack allows (e.g. Node/TypeScript calling `govuk-frontend` macros directly). If the language cannot call Nunjucks, implement thin renderers that stay byte-for-byte with fixtures — still do **not** maintain hand-copied HTML dumps from each release.
+
+Shared Node tooling in this repo (Sass pipeline, `baseline/`, docs scripts) already uses current ESM / Node 22+ practice; keep it that way.
+
+Document stack decisions and “how we write X here” notes in this file when the language is chosen, so humans and agents share one source of truth.
 
 ## Consistency tooling (today)
 

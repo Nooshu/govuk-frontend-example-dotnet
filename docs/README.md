@@ -13,16 +13,17 @@ How we keep docs dual-purpose: [documentation-structure.md](documentation-struct
 
 ## For human developers
 
-| Doc                                                | Purpose                                          |
-| -------------------------------------------------- | ------------------------------------------------ |
-| [project-purpose.md](project-purpose.md)           | What this template is for                        |
-| [onboarding.md](onboarding.md)                     | Repo map, run modes, components vs patterns      |
-| [priorities.md](priorities.md)                     | Ordered priorities                               |
-| [frontend-performance.md](frontend-performance.md) | Caching, compression, asset placement, budgets   |
-| [frontend-security.md](frontend-security.md)       | OWASP response headers, CSP, cookies             |
-| [tech-stack.md](tech-stack.md)                     | Wrapper language (TBD) + Frontend Node/Nunjucks  |
-| [guidance-sources.md](guidance-sources.md)         | Official GDS / Service Manual / Frontend URLs    |
-| [CONTRIBUTING.md](../CONTRIBUTING.md)              | How to contribute, local checks, PR expectations |
+| Doc                                                      | Purpose                                          |
+| -------------------------------------------------------- | ------------------------------------------------ |
+| [project-purpose.md](project-purpose.md)                 | What this template is for                        |
+| [onboarding.md](onboarding.md)                           | Repo map, run modes, components vs patterns      |
+| [priorities.md](priorities.md)                           | Ordered priorities                               |
+| [frontend-performance.md](frontend-performance.md)       | Caching, compression, asset placement, budgets   |
+| [frontend-security.md](frontend-security.md)             | OWASP response headers, CSP, cookies             |
+| [tech-stack.md](tech-stack.md)                           | Wrapper language (TBD) + Frontend Node/Nunjucks  |
+| [guidance-sources.md](guidance-sources.md)               | Official GDS / Service Manual / Frontend URLs    |
+| [documentation-structure.md](documentation-structure.md) | Dual-audience docs + language practice rules     |
+| [CONTRIBUTING.md](../CONTRIBUTING.md)                    | How to contribute, local checks, PR expectations |
 
 ## For AI agents
 
