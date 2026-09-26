@@ -14,6 +14,8 @@ A **base template** for **GDS-compliant** frontends: backend languages (e.g. Typ
 
 **Priorities:** frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design ([priorities.md](priorities.md)).
 
+**Documentation:** every lasting change is documented for **humans and agents** ([documentation-structure.md](documentation-structure.md)).
+
 **HTML:** prefer **Nunjucks macros** from `govuk-frontend`; set up official fixtures for extensive **100% parity** tests of backend output. Do not copy-paste component HTML from each release as the long-term approach. Before Frontend upgrades, always read https://github.com/alphagov/govuk-frontend/releases/latest.
 
 ## Priorities

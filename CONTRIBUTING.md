@@ -16,6 +16,8 @@ Thanks for helping maintain this **GDS-compliant frontend** template. This guide
 - Official fixtures for **100% HTML parity**; never edit fixture `html` to pass tests.
 - **100%** code coverage (functions, branches, statements) when application code exists.
 - Before upgrading Frontend, read https://github.com/alphagov/govuk-frontend/releases/latest.
+- Document every change for **humans and agents** ([docs/documentation-structure.md](docs/documentation-structure.md)).
+- Follow the **latest** best practices for the language in [docs/tech-stack.md](docs/tech-stack.md).
 
 Full list: [`AGENTS.md`](AGENTS.md).
 
@@ -48,10 +50,12 @@ When the wrapper language is chosen, add its format/lint/test/coverage commands 
 
 ## Pull requests
 
-- Keep changes focused; update `/docs` (and `AGENTS.md` links) when behaviour or process changes.
+- Keep changes focused; update `/docs` (and `AGENTS.md` links) when behaviour or process changes — dual audience, same PR.
+- Follow the recorded language’s latest best practices; do not introduce outdated stack idioms.
 - Do not commit unless maintainers ask in agent sessions; humans use normal git workflow.
 - Use the PR template checklist.
 - For Frontend bumps: follow [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md).
+- Split finished work into focused commits with comprehensive messages when landing multiple concerns.
 
 ## Licence and security
 
