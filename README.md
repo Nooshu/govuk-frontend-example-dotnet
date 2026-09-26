@@ -29,6 +29,7 @@ How docs are split for both audiences: [`docs/documentation-structure.md`](docs/
 
 ```sh
 npm install
+npm run build:styles
 npm test
 npm run verify:docs
 ```

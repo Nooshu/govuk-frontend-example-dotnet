@@ -25,11 +25,10 @@ While the wrapper language is TBD, Node tooling keeps docs and the shared perfor
 
 ```sh
 npm install
-npm run format:check    # Prettier
-npm run lint:md         # Markdown lint
-npm test                # baseline/ — 100% lines, branches, functions
-npm run verify:docs     # format:check + lint:md
-npm run verify          # verify:docs + test
+npm run build:styles # Sass → dist/stylesheets/application.css
+npm test             # baseline/ + styles pipeline — 100% lines, branches, functions
+npm run verify:docs  # format:check + lint:md
+npm run verify       # verify:docs + build:styles + test
 ```
 
 When the wrapper language is chosen, add its format/lint/test/coverage commands to [`docs/tech-stack.md`](docs/tech-stack.md) and wire them into CI.
