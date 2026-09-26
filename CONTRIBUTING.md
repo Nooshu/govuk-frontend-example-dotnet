@@ -19,15 +19,17 @@ Thanks for helping maintain this **GDS-compliant frontend** template. This guide
 
 Full list: [`AGENTS.md`](AGENTS.md).
 
-## Consistency tooling
+## Consistency tooling (today)
 
-These work today (language-agnostic + Node for Frontend/docs):
+While the wrapper language is TBD, Node tooling keeps docs and the shared performance/security baseline consistent:
 
 ```sh
 npm install
 npm run format:check    # Prettier
 npm run lint:md         # Markdown lint
+npm test                # baseline/ — 100% lines, branches, functions
 npm run verify:docs     # format:check + lint:md
+npm run verify          # verify:docs + test
 ```
 
 When the wrapper language is chosen, add its format/lint/test/coverage commands to [`docs/tech-stack.md`](docs/tech-stack.md) and wire them into CI.

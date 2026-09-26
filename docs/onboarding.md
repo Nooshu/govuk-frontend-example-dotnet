@@ -34,6 +34,7 @@ Exact paths follow the chosen language’s conventions — record them in [tech-
 ```text
 AGENTS.md                 # Slim agent playbook
 docs/                     # All documentation (this folder)
+baseline/                 # Shared performance + OWASP header contract (sync to language lines)
 <src>/                    # App + component library (layout per language best practice)
   …/govuk/…               # One unit per component + fixtures.json
   …/layouts/…             # Page template / chrome
@@ -82,7 +83,9 @@ While the wrapper language is TBD, Node tooling keeps docs and shared config con
 
 ```sh
 npm install
-npm run verify:docs   # Prettier + markdownlint
+npm test            # baseline headers + cache policy (100% coverage)
+npm run verify:docs # Prettier + markdownlint
+npm run verify      # both
 ```
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md). Dotfiles: `.editorconfig`, `.prettierrc.json`, `.markdownlint-cli2.jsonc`, `.nvmrc`, `.vscode/`, `.cursor/rules/`, `.github/`.
@@ -94,4 +97,5 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md). Dotfiles: `.editorconfig`, `.prettier
 3. [page-shell.md](page-shell.md) and [layout-chrome.md](layout-chrome.md)
 4. [govuk-components.md](govuk-components.md)
 5. [service-assessment-readiness.md](service-assessment-readiness.md)
-6. [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)
+6. [frontend-performance.md](frontend-performance.md) and [frontend-security.md](frontend-security.md)
+7. [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)

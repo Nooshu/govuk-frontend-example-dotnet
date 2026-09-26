@@ -13,14 +13,16 @@ How we keep docs dual-purpose: [documentation-structure.md](documentation-struct
 
 ## For human developers
 
-| Doc                                        | Purpose                                                      |
-| ------------------------------------------ | ------------------------------------------------------------ |
-| [project-purpose.md](project-purpose.md)   | What this template is for                                    |
-| [onboarding.md](onboarding.md)             | Repo map, run modes, components vs patterns, troubleshooting |
-| [priorities.md](priorities.md)             | Ordered priorities                                           |
-| [tech-stack.md](tech-stack.md)             | Wrapper language (TBD) + Frontend Node/Nunjucks              |
-| [guidance-sources.md](guidance-sources.md) | Official GDS / Service Manual / Frontend URLs                |
-| [CONTRIBUTING.md](../CONTRIBUTING.md)      | How to contribute, local checks, PR expectations             |
+| Doc                                                | Purpose                                          |
+| -------------------------------------------------- | ------------------------------------------------ |
+| [project-purpose.md](project-purpose.md)           | What this template is for                        |
+| [onboarding.md](onboarding.md)                     | Repo map, run modes, components vs patterns      |
+| [priorities.md](priorities.md)                     | Ordered priorities                               |
+| [frontend-performance.md](frontend-performance.md) | Caching, compression, asset placement, budgets   |
+| [frontend-security.md](frontend-security.md)       | OWASP response headers, CSP, cookies             |
+| [tech-stack.md](tech-stack.md)                     | Wrapper language (TBD) + Frontend Node/Nunjucks  |
+| [guidance-sources.md](guidance-sources.md)         | Official GDS / Service Manual / Frontend URLs    |
+| [CONTRIBUTING.md](../CONTRIBUTING.md)              | How to contribute, local checks, PR expectations |
 
 ## For AI agents
 
@@ -57,13 +59,15 @@ Agents should still open human-oriented docs when onboarding a teammate or expla
 
 ## UI rules
 
-| Doc                                          | Purpose                                |
-| -------------------------------------------- | -------------------------------------- |
-| [page-shell.md](page-shell.md)               | Page template, landmarks               |
-| [layout-chrome.md](layout-chrome.md)         | Skip link, header, service nav, footer |
-| [accessibility.md](accessibility.md)         | WCAG, focus, progressive enhancement   |
-| [content-and-forms.md](content-and-forms.md) | Content design, forms, errors          |
-| [design-tokens.md](design-tokens.md)         | Colour, typography, spacing            |
+| Doc                                                | Purpose                                |
+| -------------------------------------------------- | -------------------------------------- |
+| [page-shell.md](page-shell.md)                     | Page template, landmarks               |
+| [layout-chrome.md](layout-chrome.md)               | Skip link, header, service nav, footer |
+| [accessibility.md](accessibility.md)               | WCAG, focus, progressive enhancement   |
+| [content-and-forms.md](content-and-forms.md)       | Content design, forms, errors          |
+| [design-tokens.md](design-tokens.md)               | Colour, typography, spacing            |
+| [frontend-performance.md](frontend-performance.md) | Caching, compression, budgets          |
+| [frontend-security.md](frontend-security.md)       | OWASP headers, CSP, cookies            |
 
 ## Per-component docs
 

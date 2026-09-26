@@ -23,19 +23,32 @@ While the wrapper language is TBD, Node tooling keeps docs and shared config con
 
 ```sh
 npm install
-npm run verify:docs   # Prettier + markdownlint
+npm test          # baseline/ headers and cache policy
+npm run verify    # docs + tests
 ```
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md). Dotfiles: `.editorconfig`, `.prettierrc.json`, `.markdownlint-cli2.jsonc`, `.nvmrc`, `.vscode/`, `.cursor/rules/`, `.github/`. Record language-specific formatters in this file when chosen.
 
-Expect a **Node** dependency (and often small Node scripts) even when the wrapper is another language — that is how you install `govuk-frontend`, refresh fixtures, re-render Nunjucks for stale-fixture checks, and run shared docs hygiene.
+## Shared baseline (language-agnostic)
+
+[`baseline/`](../baseline/) is part of this template’s contract. Language lines sync that directory with this repo.
+
+| Piece                                             | Role                                                                                               |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| [`baseline/policy.json`](../baseline/policy.json) | OWASP header values, CSP directives, cache kinds, performance budgets                              |
+| [`baseline/index.mjs`](../baseline/index.mjs)     | Node helpers: `buildResponseHeaders`, `applyResponseHeaders`, `buildSetCookie`, preload and `ETag` |
+
+Node and TypeScript services call the helpers. Other languages implement the same `kind` values and header map, and test against the Node output. Production HTTPS passes `secureTransport: true`. Details: [frontend-performance.md](frontend-performance.md), [frontend-security.md](frontend-security.md).
+
+Expect a **Node** dependency (and often small Node scripts) even when the wrapper is another language — that is how you install `govuk-frontend`, refresh fixtures, re-render Nunjucks for stale-fixture checks, run the baseline tests, and run shared docs hygiene.
 
 ## When implementation language is confirmed, document
 
 - Language, runtime, and version policy
 - Templating approach: **Nunjucks macros preferred**; document any non-Nunjucks renderer and how fixture parity is proven
 - Package manager, lockfile, and how dependencies are pinned (including `govuk-frontend` via npm/Node)
-- How Frontend CSS/JS (and fonts) are installed and served
+- How Frontend CSS/JS (and fonts) are installed and served, fingerprinted, and passed to `buildResponseHeaders` as `fingerprinted-asset`
+- How every HTTP response applies [`baseline/`](../baseline/) (`secureTransport: true` in production)
 - Shared HTML escape + attribute helpers matching **Nunjucks `escape`** when not invoking Nunjucks directly (see [creating-components.md](creating-components.md))
 - Fixture loader and preview / raw-fixture route conventions (extensive parity coverage)
 - Layout chrome helpers (skip link, header, service navigation, footer)
