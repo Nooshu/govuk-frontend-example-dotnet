@@ -23,8 +23,9 @@ While the wrapper language is TBD, Node tooling keeps docs and shared config con
 
 ```sh
 npm install
-npm test          # baseline/ headers and cache policy
-npm run verify    # docs + tests
+npm test          # baseline/ headers and cache policy; Sass pipeline
+npm run build:styles
+npm run verify    # docs + build:styles + tests
 ```
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md). Dotfiles: `.editorconfig`, `.prettierrc.json`, `.markdownlint-cli2.jsonc`, `.nvmrc`, `.vscode/`, `.cursor/rules/`, `.github/`. Record language-specific formatters in this file when chosen.
@@ -37,6 +38,7 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md). Dotfiles: `.editorconfig`, `.prettier
 | ------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | [`baseline/policy.json`](../baseline/policy.json) | OWASP header values, CSP directives, cache kinds, performance budgets                              |
 | [`baseline/index.mjs`](../baseline/index.mjs)     | Node helpers: `buildResponseHeaders`, `applyResponseHeaders`, `buildSetCookie`, preload and `ETag` |
+| [`styles/`](../styles/)                           | Sass entry compiling Frontend via `@use`, then `govuk-overrides.scss` ([styles.md](styles.md))     |
 
 Node and TypeScript services call the helpers. Other languages implement the same `kind` values and header map, and test against the Node output. Production HTTPS passes `secureTransport: true`. Details: [frontend-performance.md](frontend-performance.md), [frontend-security.md](frontend-security.md).
 
@@ -47,7 +49,7 @@ Expect a **Node** dependency (and often small Node scripts) even when the wrappe
 - Language, runtime, and version policy
 - Templating approach: **Nunjucks macros preferred**; document any non-Nunjucks renderer and how fixture parity is proven
 - Package manager, lockfile, and how dependencies are pinned (including `govuk-frontend` via npm/Node)
-- How Frontend CSS/JS (and fonts) are installed and served, fingerprinted, and passed to `buildResponseHeaders` as `fingerprinted-asset`
+- How Frontend CSS/JS (and fonts) are installed and served: Sass compile of `styles/application.scss`, fingerprinted URL, `buildResponseHeaders` as `fingerprinted-asset`
 - How every HTTP response applies [`baseline/`](../baseline/) (`secureTransport: true` in production)
 - Shared HTML escape + attribute helpers matching **Nunjucks `escape`** when not invoking Nunjucks directly (see [creating-components.md](creating-components.md))
 - Fixture loader and preview / raw-fixture route conventions (extensive parity coverage)
@@ -62,7 +64,7 @@ Expect a **Node** dependency (and often small Node scripts) even when the wrappe
 - Prefer **Nunjucks macros** for component HTML; do not maintain copy-pasted HTML from each release.
 - Component options mirror Nunjucks macro options (`macro-options.json` / fixture `options`).
 - Backend output must pass extensive **100% HTML fixture parity** (byte-for-byte with Nunjucks / fixture `html`).
-- No custom CSS that restyles Frontend.
+- Compile CSS via Sass ([styles.md](styles.md)); `govuk-overrides.scss` last; never `!important` in service CSS.
 - Patterns compose components; they are not new low-level components.
 - Wrapper structure/tooling follow the **chosen language’s best practices**; Frontend tooling stays Node/Nunjucks.
 - No frontend UI frameworks for GOV.UK chrome — see [project-purpose.md](project-purpose.md).
@@ -73,12 +75,13 @@ See [`AGENTS.md`](../AGENTS.md), [guidance-sources.md](guidance-sources.md), and
 
 ## Placeholder version pin
 
-| Item                              | Value                                                                                                            |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Implementation language           | _TBD_                                                                                                            |
-| Templating / component approach   | _TBD — prefer Nunjucks macros when viable_                                                                       |
-| `govuk-frontend` (Node)           | _TBD — set on first install; check [latest release](https://github.com/alphagov/govuk-frontend/releases/latest)_ |
-| Nunjucks fixture verification     | _TBD — Node scripts under tests/_                                                                                |
-| Page template reference           | https://design-system.service.gov.uk/styles/page-template/                                                       |
-| Fixture testing guide             | https://frontend.design-system.service.gov.uk/testing-your-html/                                                 |
-| Upgrade / test / preview commands | _TBD — list here when wired_                                                                                     |
+| Item                              | Value                                                                                                        |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Implementation language           | _TBD_                                                                                                        |
+| Templating / component approach   | _TBD — prefer Nunjucks macros when viable_                                                                   |
+| `govuk-frontend` (Node)           | `6.5.1` — check [latest release](https://github.com/alphagov/govuk-frontend/releases/latest) before upgrades |
+| Sass pipeline                     | `styles/application.scss` → `npm run build:styles` → `dist/stylesheets/application.css`                      |
+| Nunjucks fixture verification     | _TBD — Node scripts under tests/_                                                                            |
+| Page template reference           | https://design-system.service.gov.uk/styles/page-template/                                                   |
+| Fixture testing guide             | https://frontend.design-system.service.gov.uk/testing-your-html/                                             |
+| Upgrade / test / preview commands | _TBD — list here when wired_                                                                                 |
