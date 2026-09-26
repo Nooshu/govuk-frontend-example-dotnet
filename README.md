@@ -4,6 +4,14 @@
 
 **Implementation language: TBD** — see [`docs/tech-stack.md`](docs/tech-stack.md).
 
+## Language lines
+
+Specialised repos that track this template’s shared playbooks via a `template` remote + path sync:
+
+| Line              | Repository                                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------------------------- |
+| TypeScript (Node) | [Nooshu/govuk-frontend-example-typescript](https://github.com/Nooshu/govuk-frontend-example-typescript) |
+
 ## Priorities
 
 Frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design.
