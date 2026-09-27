@@ -58,7 +58,7 @@ Expect a **Node** dependency (and often small Node scripts) even when the wrappe
 - Shared HTML escape + attribute helpers matching **Nunjucks `escape`** when not invoking Nunjucks directly (see [creating-components.md](creating-components.md))
 - Fixture loader and preview / raw-fixture route conventions (extensive parity coverage)
 - Layout chrome helpers (skip link, header, service navigation, footer)
-- Test runner commands, parity suite over **all** fixtures, **100%** coverage gate (functions / branches / statements), and **Nunjucks fixture-verification** scripts (Node)
+- Test runner commands, **backend parity suite** over **all** fixtures (primary), **100%** coverage gate (functions / branches / statements), and **Nunjucks fixture-verification** scripts (Node, secondary)
 - Upgrade entrypoint — always review https://github.com/alphagov/govuk-frontend/releases/latest first; see [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)
 - Confirmation that no frontend UI framework is in the dependency tree for rendering
 
@@ -67,7 +67,7 @@ Expect a **Node** dependency (and often small Node scripts) even when the wrappe
 - GOV.UK Frontend pins a single version; CSS/JS and fixtures must match.
 - Prefer **Nunjucks macros** for component HTML; do not maintain copy-pasted HTML from each release.
 - Component options mirror Nunjucks macro options (`macro-options.json` / fixture `options`).
-- Backend output must pass extensive **100% HTML fixture parity** (byte-for-byte with Nunjucks / fixture `html`).
+- Backend output must pass extensive **100% HTML fixture parity** (byte-for-byte vs official fixture `html` for every fixture). Nunjucks-vs-fixture checks prove freshness only; they do not replace backend parity.
 - Compile CSS via Sass ([styles.md](styles.md)); `govuk-overrides.scss` last; never `!important` in service CSS.
 - Patterns compose components; they are not new low-level components.
 - Wrapper structure/tooling follow the **chosen language’s best practices**; Frontend tooling stays Node/Nunjucks.

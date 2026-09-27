@@ -53,8 +53,9 @@ Local index: [`docs/guidance-sources.md`](../../../docs/guidance-sources.md).
 ## Test coverage and HTML parity
 
 - **Code:** 100% functions, branches, statements (CI fails below).
-- **HTML:** extensive fixture parity — backend output must match official fixture `html` byte-for-byte where fixtures exist.
-- Do not weaken either gate to satisfy the other.
+- **HTML (primary):** backend / library output must match official fixture `html` byte-for-byte for **every** fixture on every shipped component. See [`docs/testing-components.md`](../../../docs/testing-components.md).
+- **HTML (secondary):** Nunjucks suite proves stored fixtures still match Frontend macros — freshness only; it does **not** replace backend vs fixture parity.
+- Do not weaken either gate to satisfy the other; do not treat Nunjucks-only green as done.
 
 ## Workflow reminders
 
