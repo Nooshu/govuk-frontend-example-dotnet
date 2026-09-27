@@ -2,7 +2,7 @@
 
 Solid, simple update plan for keeping this example on a current, fixture-matched GOV.UK Frontend release.
 
-**Goals:** mechanical sync where possible, exact HTML parity after every bump, no invented fixtures, prefer Nunjucks macros over pasted HTML, human visual QA at the end.
+**Goals:** mechanical sync where possible, exact HTML parity after every bump, no invented fixtures, macro-aligned renderers (Nunjucks or native) over pasted HTML, human visual QA at the end.
 
 ## Principles
 
@@ -92,16 +92,16 @@ Then list what still needs **human visual QA** (preview server — [preview-serv
 
 ## Hard rules
 
-| Do                                                                               | Don’t                                              |
-| -------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Read https://github.com/alphagov/govuk-frontend/releases/latest before upgrading | Skip the latest release notes                      |
-| Prefer Nunjucks macros / macro-aligned renderers                                 | Copy-paste HTML from release notes into templates  |
-| Summarise release notes before editing                                           | Edit fixture `html` to pass tests                  |
-| Fix renderers/mappers/macro usage                                                | Add HTML normalisation in tests                    |
-| Keep CSS/JS/fixtures on one version                                              | Mix Frontend versions                              |
-| Add new components only with official fixtures                                   | Hand-build unreleased GOV.UK chrome                |
-| Use shared escape/attribute helpers (or Nunjucks itself)                         | Invent ad-hoc CSS or `!important` “fixes”          |
-| Compile Frontend through Sass (`styles/` + `govuk-overrides.scss`)               | Ship `govuk-frontend.min.css` as the long-term CSS |
+| Do                                                                               | Don’t                                                                                                         |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Read https://github.com/alphagov/govuk-frontend/releases/latest before upgrading | Skip the latest release notes                                                                                 |
+| Macro-aligned renderers (Nunjucks in-process or native wrapper HTML)             | Copy-paste HTML from release notes into templates; shell out to Node solely to render from a non-Node backend |
+| Summarise release notes before editing                                           | Edit fixture `html` to pass tests                                                                             |
+| Fix renderers/mappers/macro usage                                                | Add HTML normalisation in tests                                                                               |
+| Keep CSS/JS/fixtures on one version                                              | Mix Frontend versions                                                                                         |
+| Add new components only with official fixtures                                   | Hand-build unreleased GOV.UK chrome                                                                           |
+| Use shared escape/attribute helpers (or Nunjucks itself)                         | Invent ad-hoc CSS or `!important` “fixes”                                                                     |
+| Compile Frontend through Sass (`styles/` + `govuk-overrides.scss`)               | Ship `govuk-frontend.min.css` as the long-term CSS                                                            |
 
 ## Cadence (recommended)
 

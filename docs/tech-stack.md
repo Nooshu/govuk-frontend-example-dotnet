@@ -9,13 +9,20 @@ The _example implementation_ language and its 2026 best-practice templating / co
 | Layer                          | Stack                                                                                               | Notes                                                                                                                                      |
 | ------------------------------ | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | **GOV.UK Frontend (upstream)** | **Node** package (`govuk-frontend`), **Nunjucks** macros (`template.njk`), official `fixtures.json` | Fixed by GDS. Always name Node/Nunjucks when discussing install, fixtures, macro options, escape behaviour, and verifying stored fixtures. |
-| **This template (wrapper)**    | TBD — e.g. TypeScript, Go, Python; **prefer Nunjucks** for GOV.UK HTML when viable                  | Server-side HTML from Frontend **macros**, not pasted release HTML. **No** React/Vue/Angular/Svelte for UI.                                |
+| **This template (wrapper)**    | TBD — e.g. TypeScript, Go, Python                                                                   | Server-side HTML tracking Frontend macros/`template.njk` (Nunjucks in-process only when Node-adjacent). **No** React/Vue/Angular/Svelte.   |
 
 ## Rule for agents and humans
 
 Until an implementation language is recorded here: do not invent wrapper-specific paths, package managers, or framework idioms.
 
-Once recorded: **every** feature request and code change must follow **that language’s latest best practices** for project layout, typing, modules, testing, packaging, and CI — while honouring Frontend’s Nunjucks/fixture contract in [`AGENTS.md`](../AGENTS.md). Prefer current stable idioms for the recorded major version over outdated tutorials. **Prefer Nunjucks macros** for component HTML where the stack allows (e.g. Node/TypeScript calling `govuk-frontend` macros directly). If the language cannot call Nunjucks, implement thin renderers that stay byte-for-byte with fixtures — still do **not** maintain hand-copied HTML dumps from each release.
+Once recorded: **every** feature request and code change must follow **that language’s latest best practices** for project layout, typing, modules, testing, packaging, and CI — while honouring Frontend’s fixture contract in [`AGENTS.md`](../AGENTS.md). Prefer current stable idioms for the recorded major version over outdated tutorials.
+
+**HTML generation follows the wrapper language:**
+
+- **Node-adjacent stacks** (TypeScript on Node): calling Frontend’s **Nunjucks macros** in-process is fine — that is why the TypeScript line does it.
+- **Other languages** (Go, Python, …): generate component and page HTML **natively** in that language. Do **not** shell out to Node/Nunjucks for request-time rendering. Use the pinned package’s `template.njk` / macros as the behaviour reference, and prove **backend ≡ every fixture `html`**. Optional Node Nunjucks checks only prove fixtures are fresh.
+
+Still do **not** maintain hand-copied HTML dumps from each release as the long-term source.
 
 Shared Node tooling in this repo (Sass pipeline, `baseline/`, docs scripts) already uses current ESM / Node 22+ practice; keep it that way.
 
@@ -46,12 +53,12 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md). Dotfiles: `.editorconfig`, `.prettier
 
 Node and TypeScript services call the helpers. Other languages implement the same `kind` values and header map, and test against the Node output. Production HTTPS passes `secureTransport: true`. Details: [frontend-performance.md](frontend-performance.md), [frontend-security.md](frontend-security.md).
 
-Expect a **Node** dependency (and often small Node scripts) even when the wrapper is another language — that is how you install `govuk-frontend`, refresh fixtures, re-render Nunjucks for stale-fixture checks, run the baseline tests, and run shared docs hygiene.
+Expect a **Node** dependency for installing `govuk-frontend`, compiling Sass, running shared baseline/docs tests, and (optionally) a Nunjucks freshness check — even when the wrapper is another language. That does **not** mean the Go/Python/… server should call Node to render HTML.
 
 ## When implementation language is confirmed, document
 
 - Language, runtime, and version policy
-- Templating approach: **Nunjucks macros preferred**; document any non-Nunjucks renderer and how fixture parity is proven
+- Templating approach: Nunjucks macros when the wrapper is Node-adjacent; otherwise native HTML generation in the wrapper language, with fixture parity documented
 - Package manager, lockfile, and how dependencies are pinned (including `govuk-frontend` via npm/Node)
 - How Frontend CSS/JS (and fonts) are installed and served: Sass compile of `styles/application.scss`, fingerprinted URL, `buildResponseHeaders` as `fingerprinted-asset`
 - How every HTTP response applies [`baseline/`](../baseline/) (`secureTransport: true` in production)
@@ -82,7 +89,7 @@ See [`AGENTS.md`](../AGENTS.md), [guidance-sources.md](guidance-sources.md), and
 | Item                              | Value                                                                                                        |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | Implementation language           | _TBD_                                                                                                        |
-| Templating / component approach   | _TBD — prefer Nunjucks macros when viable_                                                                   |
+| Templating / component approach   | _TBD — Nunjucks when Node-adjacent; native HTML elsewhere; always fixture-parity_                            |
 | `govuk-frontend` (Node)           | `6.5.1` — check [latest release](https://github.com/alphagov/govuk-frontend/releases/latest) before upgrades |
 | Sass pipeline                     | `styles/application.scss` → `npm run build:styles` → `dist/stylesheets/application.css`                      |
 | Nunjucks fixture verification     | _TBD — Node scripts under tests/_                                                                            |

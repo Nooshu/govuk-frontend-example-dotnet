@@ -10,7 +10,7 @@ Teams clone or fork this template to stand up services that:
 2. Use a **standardised backend technology** for HTML generation and application logic — for example **TypeScript** (Node), **Go**, **Python**, or another agreed server-side language.
 3. Use **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned release) as the **only** frontend component library — styles, progressive-enhancement JS, and macro-driven HTML.
 4. Do **not** introduce SPA or component **frontend frameworks** (React, Vue, Angular, Svelte, Next.js UI layers, etc.) for rendering GOV.UK UI.
-5. Derive component HTML from **GOV.UK Frontend macros** — **prefer Nunjucks** over copy-pasting HTML from each release — and wire **official test fixtures** for extensive **100% HTML parity** testing of backend output.
+5. Derive component HTML from **GOV.UK Frontend macros** / `template.njk` — Nunjucks in-process on Node-adjacent stacks; **native** HTML on other backends — never long-term copy-paste from each release — and wire **official test fixtures** for extensive **100% HTML parity** testing of backend output.
 
 ## Priorities
 

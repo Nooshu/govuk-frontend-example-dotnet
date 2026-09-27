@@ -11,7 +11,7 @@
 
 **Base template** for **GDS-compliant** government frontends: standardised **backend** languages (e.g. TypeScript, Go, Python) generate HTML; **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned version) is the **only** UI component library. **No frontend frameworks** (React, Vue, Angular, Svelte, etc.) for UI.
 
-All component HTML should come from **GOV.UK Frontend macros** (prefer **Nunjucks** over copy-pasting release HTML). Official **test fixtures** from each Frontend release are the contract: the **backend language’s HTML** must match every fixture `html` byte-for-byte. A Nunjucks-only check is not enough.
+All component HTML should track **GOV.UK Frontend macros** / `template.njk` — Nunjucks in-process on Node-adjacent stacks; **native** HTML generation on Go, Python, and other backends (do not shell out to Node just to render). Never long-term copy-paste release HTML. Official **test fixtures** from each Frontend release are the contract: the **backend language’s HTML** must match every fixture `html` byte-for-byte. A Nunjucks-only check is not enough.
 
 **LIVE guidance** — [Design System feedback](https://design-system.service.gov.uk/community/feedback/).
 
@@ -38,9 +38,11 @@ Details: [`docs/priorities.md`](docs/priorities.md).
 | Official guidance URLs    | [`docs/guidance-sources.md`](docs/guidance-sources.md)                                                                  |
 | Stack / language (TBD)    | [`docs/tech-stack.md`](docs/tech-stack.md)                                                                              |
 
-**Language rule:** Before an _implementation_ stack is recorded, stay agnostic about that wrapper language. After it is recorded, **every** feature and code change must follow that language’s **latest** best practices (project layout, typing, modules, tests, packaging, CI, lint) — without weakening the non-negotiables below. Prefer current stable idioms over outdated patterns. Record stack-specific conventions in [`docs/tech-stack.md`](docs/tech-stack.md). **Prefer Nunjucks** (Frontend’s native macros) for templates where the stack allows, instead of copy-pasting static HTML from each release.
+**Language rule:** Before an _implementation_ stack is recorded, stay agnostic about that wrapper language. After it is recorded, **every** feature and code change must follow that language’s **latest** best practices (project layout, typing, modules, tests, packaging, CI, lint) — without weakening the non-negotiables below. Prefer current stable idioms over outdated patterns. Record stack-specific conventions in [`docs/tech-stack.md`](docs/tech-stack.md).
 
-**GOV.UK Frontend’s own stack:** Frontend ships as a **Node** package with **Nunjucks** macros, official `fixtures.json`, and `template.njk` sources. Refer to Node/Nunjucks directly for install, fixtures, macro options, encoding, and fixture-verification scripts.
+**HTML generation:** On **Node-adjacent** stacks (e.g. TypeScript), calling Frontend’s Nunjucks macros in-process is appropriate. On **other** stacks (Go, Python, …), generate HTML **natively** in that language — do not require Node at request time for rendering. Always track Frontend’s macros/`template.njk` as the behaviour reference and prove backend ≡ fixtures. Never long-term copy-paste static HTML from each release.
+
+**GOV.UK Frontend’s own stack:** Frontend ships as a **Node** package with **Nunjucks** macros, official `fixtures.json`, and `template.njk` sources. Use Node for install, fixtures, Sass, and optional Nunjucks freshness checks. Refer to Nunjucks for macro options and escape behaviour even when the wrapper reimplements them.
 
 **Guidance rule:** Prefer searching the URLs in [`docs/guidance-sources.md`](docs/guidance-sources.md) over inventing local policy.
 
@@ -48,7 +50,7 @@ Details: [`docs/priorities.md`](docs/priorities.md).
 
 ## Non-negotiables
 
-1. **GOV.UK Frontend macros are the HTML source of truth** — prefer rendering via Nunjucks macros (or an equivalent that tracks them). Do **not** copy-paste component HTML from release notes or the Design System site as the long-term approach.
+1. **GOV.UK Frontend macros are the HTML source of truth** — render via Nunjucks macros on Node-adjacent stacks, or via a native wrapper renderer that tracks those macros. Do **not** copy-paste component HTML from release notes or the Design System site as the long-term approach, and do **not** shell out to Node just to render HTML from a non-Node backend.
 2. **Backend HTML must match every official fixture** — for each shipped component, the **backend language’s rendered HTML** (TypeScript, Go, Python, …) is compared byte-for-byte to the `html` in that release’s `fixtures.json`, for **every** fixture. That is the primary parity gate. A Nunjucks-only check (macro output vs stored `html`) proves fixtures are fresh; it does **not** replace backend vs fixture comparison. No normalisation; never edit fixture `html` to pass tests. See [`docs/testing-components.md`](docs/testing-components.md).
 3. **No frontend UI frameworks** — no React/Vue/Angular/Svelte (or similar) for GOV.UK UI; backend + GOV.UK Frontend only.
 4. **No ad-hoc custom CSS** — ship styles through the Sass pipeline in [`styles/`](styles/) (`application.scss` → GOV.UK Frontend `@use` → [`govuk-overrides.scss`](styles/govuk-overrides.scss) last). Prefer component options and Design System patterns; do not paste or serve Frontend’s prebuilt `govuk-frontend.min.css` as the long-term source. See [`docs/styles.md`](docs/styles.md).
