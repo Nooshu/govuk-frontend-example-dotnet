@@ -61,10 +61,11 @@ Command names for the _wrapper_ are stack-specific — document them in [tech-st
 
 ## Testing mindset
 
-1. **Parity checks** compare library output to fixture `html` with ordinal string equality.
-2. **Never** edit fixture `html` to make tests pass — fix the renderer.
-3. **Never** normalise HTML in tests.
-4. **Nunjucks suite** (Node) catches **stale fixtures**; library tests catch **renderer drift**.
+1. **Parity checks (primary)** compare **backend / library** output to fixture `html` with ordinal string equality — every fixture from the pinned Frontend release.
+2. **Nunjucks suite (secondary)** compares Frontend macros to stored fixture `html` to catch **stale fixtures** only.
+3. **Never** edit fixture `html` to make tests pass — fix the renderer.
+4. **Never** normalise HTML in tests.
+5. A green Nunjucks suite alone does **not** prove the backend language is correct.
 
 Details: [testing-components.md](testing-components.md).
 

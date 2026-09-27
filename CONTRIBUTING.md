@@ -13,7 +13,7 @@ Thanks for helping maintain this **GDS-compliant frontend** template. This guide
 
 - GOV.UK Frontend only for UI — **no** React/Vue/Angular/Svelte (etc.).
 - Prefer **Nunjucks macros** over copy-pasted HTML from releases.
-- Official fixtures for **100% HTML parity**; never edit fixture `html` to pass tests.
+- Official fixtures for **100% HTML parity** of **backend** output vs every fixture `html`; never edit fixture `html` to pass tests. Nunjucks-only checks are not enough.
 - **100%** code coverage (functions, branches, statements) when application code exists.
 - Before upgrading Frontend, read https://github.com/alphagov/govuk-frontend/releases/latest.
 - Document every change for **humans and agents** ([docs/documentation-structure.md](docs/documentation-structure.md)).
