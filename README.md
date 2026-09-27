@@ -1,6 +1,6 @@
 # GOV.UK Frontend example
 
-**Base template** for **GDS-compliant** government frontends: standardised backends (TypeScript, Go, Python, …) + **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** macros (**prefer Nunjucks**) — **no** React/Vue/Angular/Svelte for UI. Official fixtures enable **100% HTML parity** testing of backend output.
+**Base template** for **GDS-compliant** government frontends: standardised backends (TypeScript, Go, Python, …) + **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (macros / fixtures as the HTML contract) — **no** React/Vue/Angular/Svelte for UI. Official fixtures enable **100% HTML parity** testing of backend output. Node-adjacent lines may call Nunjucks macros directly; other languages generate HTML natively.
 
 **Implementation language: TBD** — see [`docs/tech-stack.md`](docs/tech-stack.md).
 
@@ -11,6 +11,7 @@ Specialised repos that track this template’s shared playbooks via a `template`
 | Line              | Repository                                                                                              |
 | ----------------- | ------------------------------------------------------------------------------------------------------- |
 | TypeScript (Node) | [Nooshu/govuk-frontend-example-typescript](https://github.com/Nooshu/govuk-frontend-example-typescript) |
+| Go                | [Nooshu/govuk-frontend-example-go](https://github.com/Nooshu/govuk-frontend-example-go)                 |
 
 ## Priorities
 

@@ -3,8 +3,10 @@ name: gds-compliant-frontend
 description: >-
   Builds GDS-compliant government frontends from this base template using
   standardised backend languages (TypeScript, Go, Python, etc.) with GOV.UK
-  Frontend macros (prefer Nunjucks) and fixture HTML parity, no SPA/frontend
-  frameworks. Use when scaffolding services, choosing stack, applying Service
+  Frontend macros / fixtures as the HTML contract (Nunjucks in-process
+  on Node-adjacent stacks; native HTML generation elsewhere) and fixture
+  HTML parity, no SPA/frontend frameworks. Use when scaffolding services,
+  choosing stack, applying Service
   Standard or Technology Code of Practice guidance, implementing GOV.UK
   components/patterns, upgrading govuk-frontend, or verifying assessment-shaped UI.
 ---
@@ -17,7 +19,7 @@ A **base template** for **GDS-compliant** frontends that:
 
 - Use **standardised backend technologies** (e.g. TypeScript/Node, Go, Python) for the server and HTML generation
 - Use **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned version) as the **only** frontend component library
-- Prefer **Nunjucks macros** for component HTML — do **not** copy-paste HTML from each Frontend release as the long-term approach
+- Generate component HTML from Frontend’s macros/`template.njk` contract — Nunjucks in-process on Node-adjacent stacks; **native** HTML in Go/Python/etc. Do **not** copy-paste HTML from each Frontend release as the long-term approach, and do **not** shell out to Node solely to render HTML from a non-Node backend
 - Wire official **test fixtures** for extensive **100% HTML parity** testing of backend-generated markup
 - Do **not** use frontend frameworks (React, Vue, Angular, Svelte, Next.js client apps, etc.) for UI
 
@@ -27,13 +29,13 @@ Detail for humans: [`docs/project-purpose.md`](../../../docs/project-purpose.md)
 
 ## Non-negotiable stack shape
 
-| Layer               | Choice                                                                                                               |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| UI                  | GOV.UK Frontend only (`govuk-*`, official JS via `initAll()`)                                                        |
-| HTML generation     | Prefer **Nunjucks macros** from `govuk-frontend`; otherwise thin wrappers that stay fixture-parity with those macros |
-| Frontend frameworks | **Forbidden** for UI                                                                                                 |
-| Parity              | Official `fixtures.json` + ordinal HTML equality against backend output                                              |
-| Upstream            | Node package + Nunjucks / `template.njk` / fixtures                                                                  |
+| Layer               | Choice                                                                                                                |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| UI                  | GOV.UK Frontend only (`govuk-*`, official JS via `initAll()`)                                                         |
+| HTML generation     | Nunjucks macros when Node-adjacent; otherwise native wrapper renderers that stay fixture-parity with those macros     |
+| Frontend frameworks | **Forbidden** for UI                                                                                                  |
+| Parity              | Official `fixtures.json` + ordinal HTML equality against backend output                                               |
+| Upstream            | Node package + Nunjucks / `template.njk` / fixtures (install/Sass/freshness — not required for non-Node request HTML) |
 
 ## Authoritative guidance (search these first)
 
