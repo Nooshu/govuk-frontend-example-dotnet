@@ -48,7 +48,7 @@ tests/govuk-fixtures/              # Nunjucks freshness check
 
 | Mode    | Command                                                                                                  |
 | ------- | -------------------------------------------------------------------------------------------------------- |
-| Preview | `dotnet run --project src/GovUk.Frontend.Example` — see [preview-server.md](preview-server.md)           |
+| Preview | `npm start` — see [preview-server.md](preview-server.md)                                                 |
 | Test    | `dotnet test` with the coverage settings in [tech-stack.md](tech-stack.md), plus `npm test`              |
 | Verify  | `npm run verify`, then `dotnet format --verify-no-changes` and the two `dotnet test --settings` commands |
 | Upgrade | [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)                                               |

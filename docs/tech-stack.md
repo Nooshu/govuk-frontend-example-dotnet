@@ -63,12 +63,12 @@ dotnet format --verify-no-changes
 npm run verify           # docs, Sass, Node tests
 ```
 
-`dotnet` must be the .NET 10 SDK (`export PATH="$HOME/.dotnet:$PATH"` when it is installed in the user profile). Coverage excludes generated Razor views (`*.cshtml`) and vendor assets. Settings: [`coverlet.library.runsettings`](../coverlet.library.runsettings) and [`coverlet.example.runsettings`](../coverlet.example.runsettings).
+`dotnet` commands need the .NET 10 SDK. `npm start` runs the site with the SDK on `PATH`, or from `~/.dotnet` when that is where it is installed. Coverage excludes generated Razor views (`*.cshtml`) and vendor assets. Settings: [`coverlet.library.runsettings`](../coverlet.library.runsettings) and [`coverlet.example.runsettings`](../coverlet.example.runsettings).
 
 Local site:
 
 ```sh
-dotnet run --project src/GovUk.Frontend.Example
+npm start
 ```
 
 ## Tests and coverage
@@ -105,4 +105,4 @@ dotnet test tests/GovUk.Frontend.Example.Tests/GovUk.Frontend.Example.Tests.cspr
 | Nunjucks fixture verification | `tests/govuk-fixtures/render-fixtures.mjs`                                                                   |
 | Page template reference       | https://design-system.service.gov.uk/styles/page-template/                                                   |
 | Fixture testing guide         | https://frontend.design-system.service.gov.uk/testing-your-html/                                             |
-| Run the example               | `dotnet run --project src/GovUk.Frontend.Example`                                                            |
+| Run the example               | `npm start`                                                                                                  |
