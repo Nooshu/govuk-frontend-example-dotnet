@@ -14,7 +14,9 @@ The runtime image also contains the pinned `govuk-frontend` package so the catal
 
 ## Render
 
-[`render.yaml`](../render.yaml) is a Docker web service. Render sets `PORT`. The app listens on `0.0.0.0:$PORT` and trusts `X-Forwarded-Proto` (and `X-Forwarded-For`) from the platform proxy, including unknown proxy addresses, because Render’s edge is not in Kestrel’s default known-proxy list.
+[`render.yaml`](../render.yaml) is a Docker web service on Render’s **free** plan (`plan: free`: 512 MB RAM, 0.1 CPU). Create it with **New → Blueprint** and select this repository, or create a web service by hand and choose **Free**. Leave `PORT` unset. Render sets it. The app listens on `0.0.0.0:$PORT` and trusts `X-Forwarded-Proto` (and `X-Forwarded-For`) from the platform proxy, including unknown proxy addresses, because Render’s edge is not in Kestrel’s default known-proxy list.
+
+A free instance spins down after 15 minutes without traffic. The next request waits while the process starts, often about a minute. The filesystem is ephemeral, and the fishing-rod journey stores answers in memory, so a spin-down or restart clears that session.
 
 `/health` returns `ok` as `text/plain` and uses the `sensitive-document` cache kind (no-store). Use that path as the health check.
 

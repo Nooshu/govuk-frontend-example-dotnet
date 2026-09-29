@@ -22,7 +22,7 @@ How we keep docs dual-purpose: [documentation-structure.md](documentation-struct
 | [frontend-security.md](frontend-security.md)             | OWASP response headers, CSP, cookies             |
 | [tech-stack.md](tech-stack.md)                           | C# / .NET 10 + Frontend Node/Nunjucks            |
 | [fishing-rod-licence.md](fishing-rod-licence.md)         | Fictional example journey                        |
-| [hosting.md](hosting.md)                                 | Docker image and Render blueprint                |
+| [hosting.md](hosting.md)                                 | Docker image and Render free-plan blueprint      |
 | [guidance-sources.md](guidance-sources.md)               | Official GDS / Service Manual / Frontend URLs    |
 | [documentation-structure.md](documentation-structure.md) | Dual-audience docs + language practice rules     |
 | [CONTRIBUTING.md](../CONTRIBUTING.md)                    | How to contribute, local checks, PR expectations |

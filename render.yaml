@@ -2,6 +2,7 @@ services:
   - type: web
     name: govuk-frontend-example-dotnet
     runtime: docker
+    plan: free
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
