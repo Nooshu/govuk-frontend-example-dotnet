@@ -1,0 +1,6 @@
+**/.git
+**/bin
+**/obj
+node_modules
+src/GovUk.Frontend.Example/wwwroot/assets
+src/GovUk.Frontend.Example/wwwroot/asset-manifest.json
