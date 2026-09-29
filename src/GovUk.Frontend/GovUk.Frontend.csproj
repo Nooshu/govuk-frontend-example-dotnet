@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>GovUk.Frontend</RootNamespace>
+    <Description>Server-rendered GOV.UK Frontend components for ASP.NET Core.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="GovUk.Frontend.Tests" />
+  </ItemGroup>
+</Project>
