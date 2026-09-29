@@ -47,8 +47,54 @@ public static class ComponentInfo
         ["warning-text"] = ("Warning text", $"{DesignSystem}/warning-text/"),
     };
 
+    private static readonly Dictionary<string, string> Descriptions = new(StringComparer.Ordinal)
+    {
+        ["accordion"] = "Lets users show and hide sections of related content.",
+        ["back-link"] = "Link to the previous page in a journey.",
+        ["breadcrumbs"] = "Helps users move between levels of a section.",
+        ["button"] = "Starts or continues an action.",
+        ["character-count"] = "Shows how many characters are left in a textarea.",
+        ["checkboxes"] = "Lets users select one or more options.",
+        ["cookie-banner"] = "Asks users to accept or reject analytics cookies.",
+        ["date-input"] = "Asks users for a date they already know.",
+        ["details"] = "Hides content that only some users need.",
+        ["error-message"] = "Tells users how to fix a field that failed validation.",
+        ["error-summary"] = "Summarises form errors at the top of the page.",
+        ["exit-this-page"] = "Lets users leave a page quickly. For services where someone may be in danger.",
+        ["feedback"] = "Asks users what they think of a page. Trial component in Frontend 6.5.",
+        ["fieldset"] = "Groups related form fields, such as an address.",
+        ["file-upload"] = "Lets users select a file to upload.",
+        ["footer"] = "Page footer with Open Government Licence and Crown copyright.",
+        ["generic-header"] = "Header for services that are not branded as GOV.UK. Shown in the catalogue only.",
+        ["header"] = "The GOV.UK masthead.",
+        ["hint"] = "Extra help for a form field. Form controls include it; the catalogue shows it on its own.",
+        ["input"] = "Lets users enter a single line of text.",
+        ["inset-text"] = "Draws attention to important content on the page.",
+        ["label"] = "Labels a form field. Form controls include it; the catalogue shows it on its own.",
+        ["language-navigation"] = "Lets users switch between languages. Trial component in Frontend 6.5.",
+        ["notification-banner"] = "Tells users about something that affects the whole service.",
+        ["pagination"] = "Splits a long list across pages.",
+        ["panel"] = "Confirms a transaction is complete.",
+        ["password-input"] = "Lets users enter a password, with a control to show or hide it.",
+        ["phase-banner"] = "Shows users that the service is still being tried out.",
+        ["radios"] = "Lets users select one option from a list.",
+        ["select"] = "Lets users choose one option from a long list.",
+        ["service-navigation"] = "Shows the service name under the GOV.UK masthead.",
+        ["skip-link"] = "Lets keyboard users skip to the main content.",
+        ["summary-list"] = "Summarises answers so users can check them.",
+        ["table"] = "Shows information in rows and columns.",
+        ["tabs"] = "Lets users switch between related views. Content stays in the page without JavaScript.",
+        ["tag"] = "Shows a short status, such as on a task list.",
+        ["task-list"] = "Shows the tasks in an application and whether they are done.",
+        ["textarea"] = "Lets users enter more than one line of text. This service uses character count, which includes a textarea.",
+        ["warning-text"] = "Tells users about something important before they continue.",
+    };
+
     public static string Title(string name) =>
         Known.TryGetValue(name, out var info) ? info.Title : TitleFromKebab(name);
+
+    public static string Description(string name) =>
+        Descriptions.TryGetValue(name, out var description) ? description : "A GOV.UK Frontend component.";
 
     public static string DesignSystemUrl(string name) =>
         Known.TryGetValue(name, out var info) ? info.Url : $"{DesignSystem}/{name}/";

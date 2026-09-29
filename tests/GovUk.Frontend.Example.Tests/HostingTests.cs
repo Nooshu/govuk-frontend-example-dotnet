@@ -153,6 +153,8 @@ public class HostingTests
             Assert.Equal("secret", new FixtureCatalog(root.FullName).Find("button", null)!.Name);
             Assert.Equal("My Widget", ComponentInfo.Title("my-widget"));
             Assert.Equal("Button", ComponentInfo.Title("button"));
+            Assert.Equal("Starts or continues an action.", ComponentInfo.Description("button"));
+            Assert.Equal("A GOV.UK Frontend component.", ComponentInfo.Description("my-widget"));
             Assert.Contains("/button/", ComponentInfo.DesignSystemUrl("button"), StringComparison.Ordinal);
             Assert.Contains("/my-widget/", ComponentInfo.DesignSystemUrl("my-widget"), StringComparison.Ordinal);
         }

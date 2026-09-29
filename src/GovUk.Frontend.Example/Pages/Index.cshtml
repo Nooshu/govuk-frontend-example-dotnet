@@ -1,19 +1,20 @@
 @page "/"
 @model IndexModel
 @{
-    ViewData["Title"] = "GOV.UK Frontend example";
+    ViewData["CatalogueLayout"] = true;
+    ViewData["CatalogueHome"] = true;
+    ViewData["Title"] = "Component catalogue";
+    ViewData["Breadcrumbs"] = new System.Text.Json.Nodes.JsonArray
+    {
+        new System.Text.Json.Nodes.JsonObject { ["text"] = "Home", ["href"] = "/apply" },
+        new System.Text.Json.Nodes.JsonObject { ["text"] = "Component catalogue" },
+    };
 }
-<h1 class="govuk-heading-xl">GOV.UK Frontend example</h1>
-@GovUkHtml.Component("inset-text", new System.Text.Json.Nodes.JsonObject
-{
-    ["text"] = "This site is a fictional demonstration. It does not issue a fishing rod licence.",
-})
-<h2 class="govuk-heading-m">Example service</h2>
-<p class="govuk-body"><a class="govuk-link" href="/apply">Apply for a fishing rod licence</a></p>
-<h2 class="govuk-heading-m">Components</h2>
-<ul class="govuk-list">
+<h1 class="govuk-heading-xl">Component catalogue</h1>
+<p class="govuk-body">Every GOV.UK Frontend component in version 6.5.1. This is the preview homepage: each link opens that component's own page. Markup is rendered by this service's C# library, not by Nunjucks at request time.</p>
+<p class="govuk-body">This page lists links only — each component page shows versions (fixtures) and a live preview.</p>
 @foreach (var name in Model.Components)
 {
-    <li><a class="govuk-link" href="/components/@name">@name</a></li>
+    <p class="govuk-body govuk-!-margin-bottom-1"><a class="govuk-link" href="/components/@name">@ComponentInfo.Title(name)</a></p>
+    <p class="govuk-body">@ComponentInfo.Description(name)</p>
 }
-</ul>
