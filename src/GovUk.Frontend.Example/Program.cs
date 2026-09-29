@@ -18,6 +18,8 @@ builder.Services.AddRazorPages(options =>
     {
         options.Conventions.AddPageRoute("/ExampleSection", route);
     }
+
+    options.Conventions.AddPageRoute("/Index", ServiceHome.CataloguePath);
 });
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -54,6 +56,16 @@ var app = builder.Build();
 app.UseForwardedHeaders();
 app.UseResponseCompression();
 app.UseMiddleware<BaselineHeadersMiddleware>();
+app.Use(async (context, next) =>
+{
+    if (ServiceHome.RedirectsRootToStart(context.Request.Method, context.Request.Path))
+    {
+        context.Response.Redirect(ServiceHome.StartPath);
+        return;
+    }
+
+    await next(context);
+});
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();

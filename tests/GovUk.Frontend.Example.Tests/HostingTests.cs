@@ -1,6 +1,7 @@
 using GovUk.Frontend.Example.Catalogue;
 using GovUk.Frontend.Example.Hosting;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 
 namespace GovUk.Frontend.Example.Tests;
 
@@ -26,6 +27,15 @@ public class HostingTests
         {
             Environment.SetEnvironmentVariable("PORT", previous);
         }
+    }
+
+    [Fact]
+    public void Root_reads_redirect_to_the_service_start()
+    {
+        Assert.False(ServiceHome.RedirectsRootToStart(HttpMethods.Post, "/"));
+        Assert.False(ServiceHome.RedirectsRootToStart(HttpMethods.Get, "/apply"));
+        Assert.True(ServiceHome.RedirectsRootToStart(HttpMethods.Get, "/"));
+        Assert.True(ServiceHome.RedirectsRootToStart(HttpMethods.Head, "/"));
     }
 
     [Fact]

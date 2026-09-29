@@ -2,7 +2,7 @@
 @model PreviewModel
 @{
     ViewData["CatalogueLayout"] = true;
-    ViewData["BackLink"] = "/";
+    ViewData["BackLink"] = "/components";
     ViewData["FullWidth"] = true;
     ViewData["Title"] = Model.Found
         ? Model.Title + " – GOV.UK Frontend example"
@@ -11,7 +11,7 @@
 @if (!Model.Found)
 {
     <h1 class="govuk-heading-l">Component not found</h1>
-    <p class="govuk-body"><a class="govuk-link" href="/">Back to components</a></p>
+    <p class="govuk-body"><a class="govuk-link" href="/components">Back to components</a></p>
 }
 else
 {

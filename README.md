@@ -24,7 +24,7 @@ npm ci
 dotnet run --project src/GovUk.Frontend.Example
 ```
 
-Open `/` for the catalogue and `/apply` for the fictional licence journey. .NET 10 SDK is required.
+Open `/`. It redirects to `/apply`, the fictional licence start page. Open `/components` for the catalogue. .NET 10 SDK is required.
 
 ## Checks
 

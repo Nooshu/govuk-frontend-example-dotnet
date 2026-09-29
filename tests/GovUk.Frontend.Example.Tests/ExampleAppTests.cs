@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using GovUk.Frontend.Example.Catalogue;
 using GovUk.Frontend.Example.Hosting;
 using GovUk.Frontend.Example.Journey;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace GovUk.Frontend.Example.Tests;
@@ -18,18 +19,32 @@ public class ExampleAppTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
-    public async Task Home_lists_links_only()
+    public async Task Home_opens_the_licence_start_page()
     {
-        var client = _factory.CreateClient();
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
         var response = await client.GetAsync("/");
-        var html = await response.Content.ReadAsStringAsync();
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("Apply for a fishing rod licence", html, StringComparison.Ordinal);
-        Assert.Contains("href=\"/components/button\"", html, StringComparison.Ordinal);
-        Assert.DoesNotContain("govuk-button", html, StringComparison.Ordinal);
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.Equal("/apply", response.Headers.Location?.OriginalString);
         Assert.Contains("Content-Security-Policy", response.Headers.Select(header => header.Key));
         Assert.False(response.Headers.Contains("Strict-Transport-Security"));
         Assert.False(response.Headers.Contains("Server"));
+
+        var catalogue = await client.GetStringAsync("/components");
+        Assert.Contains("href=\"/components/button\"", catalogue, StringComparison.Ordinal);
+        Assert.DoesNotContain("govuk-button", catalogue, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Production_root_redirects_to_the_licence_start()
+    {
+        var factory = _factory.WithWebHostBuilder(builder => builder.UseEnvironment("Production"));
+        var client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        var response = await client.GetAsync("/");
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.Equal("/apply", response.Headers.Location?.OriginalString);
+        var catalogue = await client.GetAsync("/components");
+        Assert.Equal(HttpStatusCode.OK, catalogue.StatusCode);
+        Assert.Contains("href=\"/components/button\"", await catalogue.Content.ReadAsStringAsync(), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -198,6 +213,55 @@ public class ExampleAppTests : IClassFixture<WebApplicationFactory<Program>>
         var start = await client.GetAsync("/apply");
         Assert.Equal(HttpStatusCode.OK, start.StatusCode);
         Assert.Contains("Start now", await start.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+
+        var question = await client.GetStringAsync("/apply/length");
+        Assert.Contains("govuk-language-navigation", question, StringComparison.Ordinal);
+        Assert.Contains("Cymraeg", question, StringComparison.Ordinal);
+        Assert.Contains("This is a demonstration – it is not a live government service.", question, StringComparison.Ordinal);
+        Assert.DoesNotContain("govuk-service-navigation__item", question, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Start_page_uses_the_service_homepage_and_cookie_choice()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = true,
+            HandleCookies = true,
+        });
+        var page = await client.GetStringAsync("/apply");
+        Assert.Contains("Cookies on Apply for a fishing rod licence", page, StringComparison.Ordinal);
+        Assert.Contains("The 2026 to 2027 rod licence is now available.", page, StringComparison.Ordinal);
+        Assert.Contains("Developer previews", page, StringComparison.Ordinal);
+        Assert.Contains("this service's C# library", page, StringComparison.Ordinal);
+        Assert.DoesNotContain("Go library", page, StringComparison.Ordinal);
+        Assert.Contains("Help us improve this service", page, StringComparison.Ordinal);
+
+        await client.PostAsync("/apply", await FormWithToken(client, "/apply", ("cookies", "nope")));
+        Assert.Contains("Accept analytics cookies", await client.GetStringAsync("/apply"), StringComparison.Ordinal);
+
+        await client.PostAsync("/apply", await FormWithToken(client, "/apply", ("cookies", "reject")));
+        Assert.Contains("You have rejected analytics cookies.", await client.GetStringAsync("/apply"), StringComparison.Ordinal);
+
+        await client.PostAsync("/apply", await FormWithToken(client, "/apply", ("cookies", "accept")));
+        Assert.Contains("You have accepted analytics cookies.", await client.GetStringAsync("/apply"), StringComparison.Ordinal);
+
+        await client.PostAsync("/apply", await FormWithToken(client, "/apply", ("cookies", "hide")));
+        Assert.DoesNotContain("govuk-cookie-banner", await client.GetStringAsync("/apply"), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Cookie_notice_saves_only_a_known_choice()
+    {
+        var session = new DictionarySession();
+        Assert.True(string.IsNullOrEmpty(CookieNotice.Read(session)));
+        Assert.False(CookieNotice.TrySave(session, null));
+        Assert.False(CookieNotice.TrySave(session, "nope"));
+        Assert.True(CookieNotice.TrySave(session, "accept"));
+        Assert.Equal("accept", CookieNotice.Read(session));
+        Assert.True(CookieNotice.TrySave(session, "reject"));
+        Assert.True(CookieNotice.TrySave(session, "hide"));
+        Assert.Equal("hide", CookieNotice.Read(session));
     }
 
     [Fact]

@@ -1,17 +1,35 @@
 @page "/apply"
 @model StartModel
 @{
+    ViewData["ServiceHome"] = true;
     ViewData["Title"] = "Apply for a fishing rod licence";
 }
-<h1 class="govuk-heading-xl">Apply for a fishing rod licence</h1>
-@GovUkHtml.Component("inset-text", new System.Text.Json.Nodes.JsonObject
+@GovUkHtml.Component("notification-banner", new System.Text.Json.Nodes.JsonObject
 {
-    ["text"] = "This example does not issue a real licence. Do not enter information you want to keep private.",
+    ["titleText"] = "Important",
+    ["text"] = "The 2026 to 2027 rod licence is now available.",
 })
-<p class="govuk-body">Use this example to see a short GOV.UK service, from a start button to a confirmation page.</p>
+<h1 class="govuk-heading-xl">Apply for a fishing rod licence</h1>
+<p class="govuk-body-l">Use this service to apply for a licence to fish with a rod.</p>
 @GovUkHtml.Component("button", new System.Text.Json.Nodes.JsonObject
 {
     ["text"] = "Start now",
     ["href"] = "/apply/length",
     ["isStartButton"] = true,
 })
+<p class="govuk-body">Applying takes about 10 minutes.</p>
+@GovUkHtml.Component("warning-text", new System.Text.Json.Nodes.JsonObject
+{
+    ["text"] = "You must have a valid rod licence before you fish.",
+})
+@GovUkHtml.Component("inset-text", new System.Text.Json.Nodes.JsonObject
+{
+    ["text"] = "You need to be 13 or over. This example does not take payment.",
+})
+@GovUkHtml.Component("details", new System.Text.Json.Nodes.JsonObject
+{
+    ["summaryText"] = "What you will need",
+    ["html"] = "<ul class=\"govuk-list govuk-list--bullet\"><li>How long you need the licence</li><li>Your name</li><li>Your date of birth</li><li>The country where you will fish</li><li>Your email address</li></ul>",
+})
+<h2 class="govuk-heading-m">Developer previews</h2>
+<p class="govuk-body"><a class="govuk-link" href="/components">Preview GOV.UK components</a> — a separate page for each component, rendered by this service's C# library.</p>
