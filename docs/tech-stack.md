@@ -46,7 +46,7 @@ Generated files under `wwwroot/assets/` and `wwwroot/asset-manifest.json` are bu
 
 ## Preview and the example journey
 
-`/components` lists links only. `/components/{name}` lists every fixture, including hidden fixtures, and renders only the selected one with a parity banner. `/components/{name}/raw?fixture=` returns the fragment alone. `/` redirects to `/apply`.
+`/components` is the component catalogue: breadcrumbs, a short description of each component, and links only. `/components/{name}` lists every fixture, including hidden fixtures, and renders only the selected one with a parity banner. `/components/{name}/raw?fixture=` returns the fragment alone. `/` redirects to `/apply`.
 
 Those routes stay on in every environment because this hosted site is the catalogue. A real service should limit them to Development.
 

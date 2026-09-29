@@ -31,7 +31,8 @@ public class ExampleAppTests : IClassFixture<WebApplicationFactory<Program>>
 
         var catalogue = await client.GetStringAsync("/components");
         Assert.Contains("href=\"/components/button\"", catalogue, StringComparison.Ordinal);
-        Assert.DoesNotContain("govuk-button", catalogue, StringComparison.Ordinal);
+        Assert.Contains("Component catalogue", catalogue, StringComparison.Ordinal);
+        Assert.DoesNotContain("app-component-preview__frame", catalogue, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -45,6 +46,29 @@ public class ExampleAppTests : IClassFixture<WebApplicationFactory<Program>>
         var catalogue = await client.GetAsync("/components");
         Assert.Equal(HttpStatusCode.OK, catalogue.StatusCode);
         Assert.Contains("href=\"/components/button\"", await catalogue.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Catalogue_home_describes_each_component_and_saves_the_cookie_choice()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = true,
+            HandleCookies = true,
+        });
+        var page = await client.GetStringAsync("/components");
+        Assert.Contains("this service's C# library", page, StringComparison.Ordinal);
+        Assert.DoesNotContain("Go component library", page, StringComparison.Ordinal);
+        Assert.Contains("govuk-breadcrumbs", page, StringComparison.Ordinal);
+        Assert.Contains("href=\"/apply\">Home", page, StringComparison.Ordinal);
+        Assert.Contains("Lets users show and hide sections of related content.", page, StringComparison.Ordinal);
+        Assert.Contains("Tells users about something important before they continue.", page, StringComparison.Ordinal);
+        Assert.DoesNotContain("A GOV.UK Frontend component.", page, StringComparison.Ordinal);
+        Assert.Contains("Cookies on Apply for a fishing rod licence", page, StringComparison.Ordinal);
+        Assert.Contains("This is a live demo. It is not a real government service.", page, StringComparison.Ordinal);
+
+        await client.PostAsync("/components", await FormWithToken(client, "/components", ("cookies", "accept")));
+        Assert.Contains("You have accepted analytics cookies.", await client.GetStringAsync("/components"), StringComparison.Ordinal);
     }
 
     [Fact]

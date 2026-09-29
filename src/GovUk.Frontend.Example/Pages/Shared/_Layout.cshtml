@@ -6,6 +6,7 @@
     var onApply = path.StartsWith("/apply", StringComparison.Ordinal);
     var onComponents = path == "/" || path.StartsWith("/components", StringComparison.Ordinal);
     var catalogue = ViewData["CatalogueLayout"] is true;
+    var catalogueHome = ViewData["CatalogueHome"] is true;
     var serviceHome = ViewData["ServiceHome"] is true;
     var cookieChoice = ViewData["CookieChoice"] as string;
     var fullWidth = ViewData["FullWidth"] is true;
@@ -72,7 +73,7 @@
 <body class="govuk-template__body">
     <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
     @GovUkHtml.Component("skip-link")
-    @if (serviceHome && cookieChoice != "hide")
+    @if ((serviceHome || catalogueHome) && cookieChoice != "hide")
     {
         var cookieMessage = cookieChoice is "accept" or "reject"
             ? new System.Text.Json.Nodes.JsonObject
@@ -128,6 +129,13 @@
         <main class="govuk-main-wrapper" id="content">
             <div class="govuk-grid-row">
                 <div class="@column">
+                    @if (ViewData["Breadcrumbs"] is System.Text.Json.Nodes.JsonArray breadcrumbs)
+                    {
+                        @GovUkHtml.Component("breadcrumbs", new System.Text.Json.Nodes.JsonObject
+                        {
+                            ["items"] = breadcrumbs,
+                        })
+                    }
                     @if (catalogue || serviceHome)
                     {
                         @GovUkHtml.Component("notification-banner", new System.Text.Json.Nodes.JsonObject

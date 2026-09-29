@@ -80,7 +80,7 @@ Every component directory in govuk-frontend 6.5.1 that contains `fixtures.json` 
 
 ## Previews
 
-Each component has a catalogue page listing every fixture, including hidden fixtures, and rendering only the selected fixture with a parity banner. `/components` lists links only — **no live demos on that page**. `/` redirects to the fishing-rod start page. Routes stay available in every environment for this demonstration. A real service should limit them to Development. See [preview-server.md](preview-server.md).
+Each component has a catalogue page listing every fixture, including hidden fixtures, and rendering only the selected fixture with a parity banner. `/components` is the component catalogue: the same service header as the start page, breadcrumbs, and one link plus a short description for every component. It does not embed fixture previews. `/` redirects to the fishing-rod start page. Routes stay available in every environment for this demonstration. A real service should limit them to Development. See [preview-server.md](preview-server.md).
 
 ## Do not
 
