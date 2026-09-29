@@ -1,0 +1,12 @@
+@page "/apply/confirmation"
+@model ConfirmationModel
+@{
+    ViewData["Title"] = "Application complete";
+}
+@GovUkHtml.Component("panel", new System.Text.Json.Nodes.JsonObject
+{
+    ["titleText"] = "Application complete",
+    ["html"] = "Your example reference number<br><strong>" + Model.Reference + "</strong>",
+})
+<p class="govuk-body">This is a fictional example. Nobody will send you a fishing rod licence.</p>
+<p class="govuk-body"><a class="govuk-link" href="/">Back to the component list</a></p>

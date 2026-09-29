@@ -1,0 +1,19 @@
+@page "/"
+@model IndexModel
+@{
+    ViewData["Title"] = "GOV.UK Frontend example";
+}
+<h1 class="govuk-heading-xl">GOV.UK Frontend example</h1>
+@GovUkHtml.Component("inset-text", new System.Text.Json.Nodes.JsonObject
+{
+    ["text"] = "This site is a fictional demonstration. It does not issue a fishing rod licence.",
+})
+<h2 class="govuk-heading-m">Example service</h2>
+<p class="govuk-body"><a class="govuk-link" href="/apply">Apply for a fishing rod licence</a></p>
+<h2 class="govuk-heading-m">Components</h2>
+<ul class="govuk-list">
+@foreach (var name in Model.Components)
+{
+    <li><a class="govuk-link" href="/components/@name">@name</a></li>
+}
+</ul>

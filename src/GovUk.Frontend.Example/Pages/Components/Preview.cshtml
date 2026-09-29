@@ -1,0 +1,68 @@
+@page "/components/{name}"
+@model PreviewModel
+@{
+    ViewData["CatalogueLayout"] = true;
+    ViewData["BackLink"] = "/";
+    ViewData["FullWidth"] = true;
+    ViewData["Title"] = Model.Found
+        ? Model.Title + " – GOV.UK Frontend example"
+        : "Component not found";
+}
+@if (!Model.Found)
+{
+    <h1 class="govuk-heading-l">Component not found</h1>
+    <p class="govuk-body"><a class="govuk-link" href="/">Back to components</a></p>
+}
+else
+{
+    <h1 class="govuk-heading-l">@Model.Title</h1>
+    <p class="govuk-body">Preview of the C# renderer for this component. Choose a version below to compare the C# HTML with the official fixture from GOV.UK Frontend 6.5.1.</p>
+    <p class="govuk-body"><a class="govuk-link" href="@Model.DesignSystemUrl">@Model.Title on the GOV.UK Design System</a></p>
+    @if (Model.Selected is not null)
+    {
+        <h2 class="govuk-heading-m">Current version: @Model.Selected.Name</h2>
+        @if (Model.Matches)
+        {
+            @GovUkHtml.Component("notification-banner", new System.Text.Json.Nodes.JsonObject
+            {
+                ["type"] = "success",
+                ["titleText"] = "HTML matches the fixture",
+                ["text"] = "The C# HTML is the same as the official fixture HTML.",
+            })
+        }
+        else
+        {
+            @GovUkHtml.Component("notification-banner", new System.Text.Json.Nodes.JsonObject
+            {
+                ["titleText"] = "HTML does not match the fixture",
+                ["text"] = "The C# HTML is different from the official fixture HTML.",
+            })
+        }
+        <div class="app-component-preview">
+            <h3 class="govuk-heading-s">Component preview</h3>
+            <div class="app-component-preview__frame">
+                @Model.PreviewHtml
+            </div>
+        </div>
+    }
+    <h2 class="govuk-heading-m">Versions (Fixtures)</h2>
+    <nav aria-label="Versions">
+        <ul class="govuk-list">
+        @foreach (var fixture in Model.Fixtures)
+        {
+            var current = Model.Selected is not null && fixture.Name == Model.Selected.Name;
+            <li>
+            @if (current)
+            {
+                <strong aria-current="true">@fixture.Name</strong>
+                @GovUkHtml.Component("tag", new System.Text.Json.Nodes.JsonObject { ["text"] = "Current" })
+            }
+            else
+            {
+                <a class="govuk-link" href="/components/@Model.Component?fixture=@Uri.EscapeDataString(fixture.Name)">@fixture.Name</a>
+            }
+            </li>
+        }
+        </ul>
+    </nav>
+}

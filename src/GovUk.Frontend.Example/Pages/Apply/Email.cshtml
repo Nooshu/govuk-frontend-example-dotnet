@@ -1,0 +1,46 @@
+@page "/apply/email"
+@model EmailModel
+@{
+    ViewData["Title"] = "What is your email address?";
+    ViewData["BackLink"] = "/apply/country";
+}
+<form method="post" novalidate>
+@if (Model.Error is not null)
+{
+    @GovUkHtml.Component("error-summary", new System.Text.Json.Nodes.JsonObject
+    {
+        ["titleText"] = "There is a problem",
+        ["errorList"] = new System.Text.Json.Nodes.JsonArray
+        {
+            new System.Text.Json.Nodes.JsonObject { ["text"] = Model.Error, ["href"] = "#email" },
+        },
+    })
+}
+@{
+    var input = new System.Text.Json.Nodes.JsonObject
+    {
+        ["id"] = "email",
+        ["name"] = "email",
+        ["type"] = "email",
+        ["autocomplete"] = "email",
+        ["spellcheck"] = false,
+        ["value"] = Model.Email,
+        ["label"] = new System.Text.Json.Nodes.JsonObject
+        {
+            ["text"] = "What is your email address?",
+            ["isPageHeading"] = true,
+            ["classes"] = "govuk-label--l",
+        },
+        ["hint"] = new System.Text.Json.Nodes.JsonObject
+        {
+            ["text"] = "This example stores the address in your browser session only.",
+        },
+    };
+    if (Model.Error is not null)
+    {
+        input["errorMessage"] = new System.Text.Json.Nodes.JsonObject { ["text"] = Model.Error };
+    }
+}
+@GovUkHtml.Component("input", input)
+@GovUkHtml.Component("button", new System.Text.Json.Nodes.JsonObject { ["text"] = "Continue" })
+</form>

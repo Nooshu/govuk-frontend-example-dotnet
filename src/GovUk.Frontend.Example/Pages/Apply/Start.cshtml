@@ -1,0 +1,17 @@
+@page "/apply"
+@model StartModel
+@{
+    ViewData["Title"] = "Apply for a fishing rod licence";
+}
+<h1 class="govuk-heading-xl">Apply for a fishing rod licence</h1>
+@GovUkHtml.Component("inset-text", new System.Text.Json.Nodes.JsonObject
+{
+    ["text"] = "This example does not issue a real licence. Do not enter information you want to keep private.",
+})
+<p class="govuk-body">Use this example to see a short GOV.UK service, from a start button to a confirmation page.</p>
+@GovUkHtml.Component("button", new System.Text.Json.Nodes.JsonObject
+{
+    ["text"] = "Start now",
+    ["href"] = "/apply/length",
+    ["isStartButton"] = true,
+})

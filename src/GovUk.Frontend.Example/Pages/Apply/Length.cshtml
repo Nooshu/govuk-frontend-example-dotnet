@@ -1,0 +1,54 @@
+@page "/apply/length"
+@model LengthModel
+@{
+    ViewData["Title"] = "How long do you need the licence for?";
+    ViewData["BackLink"] = "/apply";
+}
+<form method="post" novalidate>
+@if (Model.Error is not null)
+{
+    @GovUkHtml.Component("error-summary", new System.Text.Json.Nodes.JsonObject
+    {
+        ["titleText"] = "There is a problem",
+        ["errorList"] = new System.Text.Json.Nodes.JsonArray
+        {
+            new System.Text.Json.Nodes.JsonObject { ["text"] = Model.Error, ["href"] = "#length" },
+        },
+    })
+}
+@{
+    var items = new System.Text.Json.Nodes.JsonArray();
+    foreach (var (value, label) in LicenceJourney.Lengths)
+    {
+        var item = new System.Text.Json.Nodes.JsonObject { ["value"] = value, ["text"] = label };
+        if (Model.Length == value)
+        {
+            item["checked"] = true;
+        }
+
+        items.Add(item);
+    }
+
+    var radios = new System.Text.Json.Nodes.JsonObject
+    {
+        ["idPrefix"] = "length",
+        ["name"] = "length",
+        ["fieldset"] = new System.Text.Json.Nodes.JsonObject
+        {
+            ["legend"] = new System.Text.Json.Nodes.JsonObject
+            {
+                ["text"] = "How long do you need the licence for?",
+                ["isPageHeading"] = true,
+                ["classes"] = "govuk-fieldset__legend--l",
+            },
+        },
+        ["items"] = items,
+    };
+    if (Model.Error is not null)
+    {
+        radios["errorMessage"] = new System.Text.Json.Nodes.JsonObject { ["text"] = Model.Error };
+    }
+}
+@GovUkHtml.Component("radios", radios)
+@GovUkHtml.Component("button", new System.Text.Json.Nodes.JsonObject { ["text"] = "Continue" })
+</form>
