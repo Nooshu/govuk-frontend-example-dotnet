@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: govuk-frontend-example-dotnet
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
