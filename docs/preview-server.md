@@ -15,7 +15,8 @@ The first build runs `node scripts/build-assets-cli.mjs`. .NET 10 SDK is require
 
 | URL                                         | What it shows                                                                                       |
 | ------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `/`                                         | Links only: the example service, then one link per component. No embedded demos.                    |
+| `/`                                         | Redirects to `/apply`, the service start page.                                                      |
+| `/components`                               | Links only: the example service, then one link per component. No embedded demos.                    |
 | `/apply`                                    | Fictional fishing-rod-licence journey. See [fishing-rod-licence.md](fishing-rod-licence.md).        |
 | `/components/{name}?fixture={fixture name}` | Every fixture for that component, including hidden fixtures. Only the selected fixture is rendered. |
 | `/components/{name}/raw?fixture={name}`     | The HTML fragment alone.                                                                            |

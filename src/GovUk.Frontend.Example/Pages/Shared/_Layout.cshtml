@@ -6,6 +6,8 @@
     var onApply = path.StartsWith("/apply", StringComparison.Ordinal);
     var onComponents = path == "/" || path.StartsWith("/components", StringComparison.Ordinal);
     var catalogue = ViewData["CatalogueLayout"] is true;
+    var serviceHome = ViewData["ServiceHome"] is true;
+    var cookieChoice = ViewData["CookieChoice"] as string;
     var fullWidth = ViewData["FullWidth"] is true;
     var navigation = new System.Text.Json.Nodes.JsonArray
     {
@@ -17,7 +19,7 @@
         },
         new System.Text.Json.Nodes.JsonObject
         {
-            ["href"] = "/",
+            ["href"] = "/components",
             ["text"] = "Components",
             ["current"] = onComponents && !onApply,
         },
@@ -27,7 +29,7 @@
         ["serviceName"] = "Apply for a fishing rod licence",
         ["serviceUrl"] = "/apply",
     };
-    if (catalogue)
+    if (catalogue || onApply)
     {
         var language = GovUkHtml.Render("language-navigation", new System.Text.Json.Nodes.JsonObject
         {
@@ -35,7 +37,7 @@
             ["items"] = new System.Text.Json.Nodes.JsonArray
             {
                 new System.Text.Json.Nodes.JsonObject { ["text"] = "English", ["lang"] = "en", ["current"] = true },
-                new System.Text.Json.Nodes.JsonObject { ["text"] = "Cymraeg", ["lang"] = "cy", ["href"] = "/" },
+                new System.Text.Json.Nodes.JsonObject { ["text"] = "Cymraeg", ["lang"] = "cy", ["href"] = onApply ? "/apply" : "/components" },
             },
         });
         serviceNavigation["slots"] = new System.Text.Json.Nodes.JsonObject
@@ -52,8 +54,8 @@
         serviceNavigation["navigation"] = navigation;
     }
 
-    var phaseHtml = catalogue
-        ? "This is a demonstration – it is not a government service. Your <a class=\"govuk-link\" href=\"/\">feedback</a> will help us improve the example."
+    var phaseHtml = onApply || catalogue
+        ? "This is a demonstration – it is not a live government service. Your <a class=\"govuk-link\" href=\"/help\">feedback</a> will help us improve the example."
         : "This is a fictional example. It does not issue a fishing rod licence.";
     var column = fullWidth ? "govuk-grid-column-full" : "govuk-grid-column-two-thirds";
 }
@@ -70,6 +72,45 @@
 <body class="govuk-template__body">
     <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
     @GovUkHtml.Component("skip-link")
+    @if (serviceHome && cookieChoice != "hide")
+    {
+        var cookieMessage = cookieChoice is "accept" or "reject"
+            ? new System.Text.Json.Nodes.JsonObject
+            {
+                ["text"] = cookieChoice == "accept"
+                    ? "You have accepted analytics cookies."
+                    : "You have rejected analytics cookies.",
+                ["role"] = "alert",
+                ["actions"] = new System.Text.Json.Nodes.JsonArray
+                {
+                    new System.Text.Json.Nodes.JsonObject
+                    {
+                        ["text"] = "Hide cookie message",
+                        ["type"] = "submit",
+                        ["name"] = "cookies",
+                        ["value"] = "hide",
+                    },
+                },
+            }
+            : new System.Text.Json.Nodes.JsonObject
+            {
+                ["headingText"] = "Cookies on Apply for a fishing rod licence",
+                ["text"] = "We use analytics cookies to understand how you use this example service. This example does not set analytics cookies.",
+                ["actions"] = new System.Text.Json.Nodes.JsonArray
+                {
+                    new System.Text.Json.Nodes.JsonObject { ["text"] = "Accept analytics cookies", ["type"] = "submit", ["name"] = "cookies", ["value"] = "accept" },
+                    new System.Text.Json.Nodes.JsonObject { ["text"] = "Reject analytics cookies", ["type"] = "submit", ["name"] = "cookies", ["value"] = "reject" },
+                    new System.Text.Json.Nodes.JsonObject { ["text"] = "View cookies", ["href"] = "/cookies" },
+                },
+            };
+        <form method="post" action="@path" novalidate>
+            @Html.AntiForgeryToken()
+            @GovUkHtml.Component("cookie-banner", new System.Text.Json.Nodes.JsonObject
+            {
+                ["messages"] = new System.Text.Json.Nodes.JsonArray { cookieMessage },
+            })
+        </form>
+    }
     <div class="govuk-template__header">
         @GovUkHtml.Component("header", new System.Text.Json.Nodes.JsonObject { ["homepageUrl"] = "/" })
         @GovUkHtml.Component("service-navigation", serviceNavigation)
@@ -85,25 +126,33 @@
             @GovUkHtml.Component("back-link", new System.Text.Json.Nodes.JsonObject { ["href"] = backLink })
         }
         <main class="govuk-main-wrapper" id="content">
-            @if (catalogue)
-            {
-                @GovUkHtml.Component("notification-banner", new System.Text.Json.Nodes.JsonObject
-                {
-                    ["classes"] = "app-demo-banner",
-                    ["titleId"] = "app-demo-banner-title",
-                    ["titleText"] = "Important",
-                    ["text"] = "This is a live demo. It is not a real government service.",
-                })
-            }
             <div class="govuk-grid-row">
                 <div class="@column">
+                    @if (catalogue || serviceHome)
+                    {
+                        @GovUkHtml.Component("notification-banner", new System.Text.Json.Nodes.JsonObject
+                        {
+                            ["classes"] = "app-demo-banner",
+                            ["titleId"] = "app-demo-banner-title",
+                            ["titleText"] = "Important",
+                            ["text"] = "This is a live demo. It is not a real government service.",
+                        })
+                    }
                     @RenderBody()
                 </div>
             </div>
         </main>
     </div>
-    @if (catalogue)
+    @if (catalogue || serviceHome)
     {
+        if (serviceHome)
+        {
+            @GovUkHtml.Component("feedback", new System.Text.Json.Nodes.JsonObject
+            {
+                ["titleText"] = "Help us improve this service",
+                ["html"] = "<p class=\"govuk-body\">This example does not send feedback. <a class=\"govuk-link\" href=\"/help\">Get help with this example</a>.</p>",
+            })
+        }
         @GovUkHtml.Component("footer", new System.Text.Json.Nodes.JsonObject
         {
             ["meta"] = new System.Text.Json.Nodes.JsonObject
@@ -117,7 +166,7 @@
                     new System.Text.Json.Nodes.JsonObject { ["href"] = "/cookies", ["text"] = "Cookies" },
                     new System.Text.Json.Nodes.JsonObject { ["href"] = "/accessibility", ["text"] = "Accessibility" },
                     new System.Text.Json.Nodes.JsonObject { ["href"] = "/", ["text"] = "About this example" },
-                    new System.Text.Json.Nodes.JsonObject { ["href"] = "/", ["text"] = "Component catalogue" },
+                    new System.Text.Json.Nodes.JsonObject { ["href"] = "/components", ["text"] = "Component catalogue" },
                     new System.Text.Json.Nodes.JsonObject { ["href"] = "/", ["text"] = "Example pages" },
                 },
             },

@@ -18,6 +18,8 @@ The runtime image also contains the pinned `govuk-frontend` package so the catal
 
 A free instance spins down after 15 minutes without traffic. The next request waits while the process starts, often about a minute. The filesystem is ephemeral, and the fishing-rod journey stores answers in memory, so a spin-down or restart clears that session.
 
+The site opens on the fishing-rod start page: `GET /` and `HEAD /` redirect to `/apply`. The component catalogue remains at `/components`.
+
 `/health` returns `ok` as `text/plain` and uses the `sensitive-document` cache kind (no-store). Use that path as the health check.
 
 Preview and raw-fixture routes stay enabled in Production for this demonstration. A real service should limit them to Development.
