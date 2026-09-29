@@ -25,6 +25,7 @@ dist/
 build/
 out/
 coverage/
+TestResults/
 .nyc_output/
 *.lcov
 .cache/
@@ -68,6 +69,10 @@ Thumbs.db
 !.cursor/skills/**/*
 !.cursor/rules/
 !.cursor/rules/**/*
+
+# Generated GOV.UK assets (npm/dotnet build)
+src/GovUk.Frontend.Example/wwwroot/assets/
+src/GovUk.Frontend.Example/wwwroot/asset-manifest.json
 
 # Test / fixture noise
 tmp/

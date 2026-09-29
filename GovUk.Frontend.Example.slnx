@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GovUk.Frontend.Example/GovUk.Frontend.Example.csproj" />
+    <Project Path="src/GovUk.Frontend/GovUk.Frontend.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GovUk.Frontend.Example.Tests/GovUk.Frontend.Example.Tests.csproj" />
+    <Project Path="tests/GovUk.Frontend.Tests/GovUk.Frontend.Tests.csproj" />
+  </Folder>
+</Solution>
