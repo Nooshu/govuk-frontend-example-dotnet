@@ -6,44 +6,39 @@ Official fixture guidance: [https://frontend.design-system.service.gov.uk/testin
 
 Related docs: [govuk-components.md](govuk-components.md), [testing-components.md](testing-components.md), [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md), [preview-server.md](preview-server.md).
 
-**Stack note:** Structure the _wrapper_ using the **chosen language’s best practices** ([tech-stack.md](tech-stack.md)). Prefer calling **GOV.UK Frontend Nunjucks macros** for component HTML rather than copy-pasting HTML from each release. Official `fixtures.json` enables extensive **100% parity** testing of backend output.
+**Stack note:** Structure the renderer in C# ([tech-stack.md](tech-stack.md)). Track the GOV.UK Frontend template rather than copy-pasting HTML from each release. Official `fixtures.json` is the **100% parity** contract for that C# output.
 
 ## Goals (non-negotiable)
 
 1. **GOV.UK Frontend is the source of truth** — official CSS/JS and `fixtures.json` from the **same** pinned `govuk-frontend` Node package.
 2. **Options mirror Nunjucks macros** — names/shapes align with `macro-options.json` / fixture `options`.
-3. **Exact HTML parity (backend vs fixtures)** — the **backend language’s** output equals each fixture’s `html` byte-for-byte (ordinal equality). Cover every fixture. A Nunjucks-vs-fixture check is freshness only; it does not replace backend parity. See [testing-components.md](testing-components.md).
+3. **Exact HTML parity (C# vs fixtures)** — C# output equals each fixture’s `html` byte-for-byte (ordinal equality). Cover every fixture. A Nunjucks-vs-fixture check is freshness only; it does not replace the C# comparison. See [testing-components.md](testing-components.md).
 4. **Never hand-write component markup in pages** — pages invoke the library API.
 5. **No ad-hoc custom CSS** — Sass pipeline + `govuk-overrides.scss` only; no `!important` ([styles.md](styles.md)).
 6. **Register in navigation** — every shipped component appears in the home/components list with a preview link.
 
-## Which sibling to copy (once examples exist)
+## Which renderer to copy
 
-| If the component is…                        | Start from                                                  |
-| ------------------------------------------- | ----------------------------------------------------------- |
-| Single element / simple attributes          | Back link or Button                                         |
-| List of items                               | Breadcrumbs or Accordion                                    |
-| Form control that **composes** other macros | Character count (read every nested Nunjucks `template.njk`) |
+| If the component is…                       | Start from                                         |
+| ------------------------------------------ | -------------------------------------------------- |
+| Single element / simple attributes         | Back link or Button                                |
+| List of items                              | Breadcrumbs or Accordion                           |
+| Form control that **composes** other parts | Character count (read every nested `template.njk`) |
 
 ## Target layout (conceptual)
 
 Exact filenames and folders follow [tech-stack.md](tech-stack.md). Conceptually each component needs:
 
 ```text
-component unit (name idiomatic for the wrapper language)
-  options / model types
-  public API entry
-  renderer                         # builds exact HTML string
-  options mapper                   # fixtures.json options → model
-  fixtures.json                    # from govuk-frontend (do not invent html)
+src/GovUk.Frontend/Components/
+  renderer                         # builds the exact HTML string
+  ParamBag options                 # fixtures.json options
 
-preview surface                    # Dev/Testing only — selected fixture
-raw fixture endpoint               # fragment only; Dev/Testing only
+preview page                       # selected fixture
+raw fixture route                  # fragment only
 
-parity + structural tests          # wrapper language
-tests/govuk-fixtures/…             # Nunjucks verification (Node)
-  <kebab-name>.fixtures.json
-  render-<kebab-name>-fixtures.mjs
+tests/GovUk.Frontend.Tests/        # C# parity
+tests/govuk-fixtures/              # Nunjucks freshness check (Node)
 ```
 
 ## Recommended work order
@@ -51,7 +46,7 @@ tests/govuk-fixtures/…             # Nunjucks verification (Node)
 1. Copy official fixtures beside the component and into `tests/govuk-fixtures/` (or equivalent) for the Nunjucks suite.
 2. Dump every fixture’s `html` + `options`; read Nunjucks `template.njk` (+ imports). Note attribute order and `{%-` / `-%}` whitespace stripping.
 3. Implement models + mapper + renderer together — do not free-hand the component body in a way that drifts from the template.
-4. Clone preview/fixture surfaces, parity tests, and the Node Nunjucks render script from the closest sibling.
+4. Follow the existing preview page, parity tests, and `tests/govuk-fixtures/render-fixtures.mjs`.
 5. Register homepage/nav entry (nav only — no live demos on the index).
 6. Run parity tests → fix renderer/mapper only → Nunjucks suite → docs.
 7. Visual check via preview ([preview-server.md](preview-server.md)).
@@ -68,15 +63,15 @@ tests/govuk-fixtures/…             # Nunjucks verification (Node)
 
 ### 2. Models (Nunjucks-aligned)
 
-- Root model mirrors macro options (`id`, `classes`, `attributes`, …) using types idiomatic for the wrapper language.
+- Options mirror the template parameters (`id`, `classes`, `attributes`, …) through `ParamBag`.
 - Use a text/html pair: prefer `text` (encoded); `html` only for **trusted** markup; if both set, `html` wins; sanitise untrusted input.
-- Map JSON carefully (`headingLevel` → idiomatic name in the language).
+- Map JSON carefully (`headingLevel` and the other template names stay as the fixture spells them).
 - Handle edge cases: falsy array entries, **tri-state booleans** (unset vs `false`), nested `label` / `hint` / `errorMessage` / `formGroup` / i18n maps.
 - JSON numbers that Nunjucks stringifies (`maxlength`, `rows`, …) must round-trip as strings in HTML attributes where fixtures do.
 
 ### 3. Renderer
 
-Prefer a dedicated `render(model) → string` (or the language’s equivalent) invoked by the public API.
+Prefer a dedicated renderer that returns a string, invoked by `ComponentCatalog.Render`.
 
 **Read Nunjucks** `template.njk` **as the contract.** Attribute order and newlines follow the template (including `{%-` stripping).
 
@@ -104,7 +99,7 @@ Other rules:
 
 ### 4. Public API
 
-Thin wrapper: accept the options model, return rendered HTML in whatever form is idiomatic (string, safe HTML type, component result). Pages call the library — they do not paste markup.
+The public entry accepts a `ParamBag` and returns an HTML string. Pages call `GovUkHtml.Component` — they do not paste markup.
 
 ### 5. Options mapper
 
@@ -118,7 +113,7 @@ Map fixture `options` → model without losing edge cases: nested text/html, att
 ### 7. Previews surface
 
 - List fixture names; **render only the selected** fixture.
-- Show parity banner (library HTML vs official `html`).
+- Show the parity banner only from an ordinal comparison of the rendered C# HTML with the fixture `html`. The success text is “The C# HTML is the same as the official fixture HTML.”
 - Back link to home — never use fixture hrefs for chrome.
 - Syntax highlighting assets on Previews only — not global layout.
 - Development / Testing only.
@@ -126,16 +121,16 @@ Map fixture `options` → model without losing edge cases: nested text/html, att
 ### 8. Tests
 
 1. Structural/smoke: index lists preview; no embedded demo on index.
-2. Parity (**primary**): one case per fixture name; in-process mapper + **backend** renderer; ordinal string equality to fixture `html`; cache fixtures. This is the wrapper language’s interpretation under test.
-3. Optional HTTP smoke for fixture + preview surfaces when the stack has an HTTP app.
-4. Use the wrapper language’s normal test isolation patterns.
+2. Parity (**primary**): one case per fixture name; in-process `ParamBag` + C# renderer; ordinal string equality to fixture `html`. This is the C# renderer under test.
+3. HTTP checks for the catalogue and raw fragment live in the example test project.
+4. Use xUnit. Registering the component in `ComponentCatalog` picks the fixture up in the data-driven parity test.
 
 ### 9. Nunjucks fixture verification (Node)
 
 - Depend on the same `govuk-frontend` pin via npm/Node.
 - Script renders each fixture through Frontend’s Nunjucks macros and compares to stored `html` (trim trailing newline only if needed).
-- Purpose: catch **stale fixtures** only. Library / backend parity tests catch **renderer drift**.
-- A green Nunjucks suite without a green backend parity suite is **not** done.
+- Purpose: catch **stale fixtures** only. The C# parity tests catch **renderer drift**.
+- A green Nunjucks suite without a green C# parity suite is **not** done.
 - Typical shape: `tests/govuk-fixtures/render-<kebab-name>-fixtures.mjs` — document the exact runner in [tech-stack.md](tech-stack.md).
 
 ### 10. Navigation + docs
@@ -167,6 +162,6 @@ Use the preview server; hard-refresh after rebuilds. Confirm the component is li
 
 ## Do / don’t
 
-**Do:** start from fixtures + Nunjucks `template.njk` + closest sibling; keep one coherent unit per component; prove **backend vs fixture** parity before calling done; use idiomatic types/modules/tests for the wrapper language; keep a Node Nunjucks suite for fixture freshness.
+**Do:** start from fixtures and `template.njk`; keep one renderer per component; prove C# HTML matches every fixture before calling done; keep the Node freshness check.
 
-**Don’t:** hand-paste `govuk-`\* into pages; ship without nav/preview; embed demos on index; add ad-hoc CSS or `!important`; normalise HTML in tests; invent fixture HTML; nest incompatible components; pretend Frontend is not Node/Nunjucks upstream; ship the prebuilt minified Frontend CSS instead of the Sass pipeline; claim parity from Nunjucks-only checks without backend vs fixture tests.
+**Don’t:** hand-paste `govuk-*` into pages; ship without a catalogue link; embed demos on the index; add ad-hoc CSS or `!important`; normalise HTML in tests; invent fixture HTML; ship the prebuilt minified Frontend CSS instead of the Sass pipeline; claim parity from the Nunjucks check alone.

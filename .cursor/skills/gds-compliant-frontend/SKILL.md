@@ -1,12 +1,9 @@
 ---
 name: gds-compliant-frontend
 description: >-
-  Builds GDS-compliant government frontends from this base template using
-  standardised backend languages (TypeScript, Go, Python, etc.) with GOV.UK
-  Frontend macros / fixtures as the HTML contract (Nunjucks in-process
-  on Node-adjacent stacks; native HTML generation elsewhere) and fixture
-  HTML parity, no SPA/frontend frameworks. Use when scaffolding services,
-  choosing stack, applying Service
+  Builds this GDS-compliant .NET frontend: C# / ASP.NET Core renders HTML,
+  GOV.UK Frontend fixtures are the HTML contract, and there is no SPA or
+  Blazor UI. Use when changing the example service, applying Service
   Standard or Technology Code of Practice guidance, implementing GOV.UK
   components/patterns, upgrading govuk-frontend, or verifying assessment-shaped UI.
 ---
@@ -15,13 +12,13 @@ description: >-
 
 ## What this project is
 
-A **base template** for **GDS-compliant** frontends that:
+A **C# / ASP.NET Core** example of a **GDS-compliant** frontend that:
 
-- Use **standardised backend technologies** (e.g. TypeScript/Node, Go, Python) for the server and HTML generation
-- Use **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned version) as the **only** frontend component library
-- Generate component HTML from Frontend’s macros/`template.njk` contract — Nunjucks in-process on Node-adjacent stacks; **native** HTML in Go/Python/etc. Do **not** copy-paste HTML from each Frontend release as the long-term approach, and do **not** shell out to Node solely to render HTML from a non-Node backend
-- Wire official **test fixtures** for extensive **100% HTML parity** testing of backend-generated markup
-- Do **not** use frontend frameworks (React, Vue, Angular, Svelte, Next.js client apps, etc.) for UI
+- Uses **.NET 10** for the server and HTML generation
+- Uses **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned version) as the **only** frontend component library
+- Generates component HTML in C# from Frontend’s `template.njk` contract. Do **not** copy-paste HTML from each Frontend release as the long-term approach, and do **not** shell out to Node to render a request
+- Wires official **test fixtures** for extensive **100% HTML parity** testing of the C# markup
+- Does **not** use frontend frameworks (React, Vue, Angular, Svelte, Next.js client apps, Blazor, etc.) for UI
 
 Priorities (in order): frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design. See [`docs/priorities.md`](../../../docs/priorities.md).
 
@@ -29,13 +26,14 @@ Detail for humans: [`docs/project-purpose.md`](../../../docs/project-purpose.md)
 
 ## Non-negotiable stack shape
 
-| Layer               | Choice                                                                                                                |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| UI                  | GOV.UK Frontend only (`govuk-*`, official JS via `initAll()`)                                                         |
-| HTML generation     | Nunjucks macros when Node-adjacent; otherwise native wrapper renderers that stay fixture-parity with those macros     |
-| Frontend frameworks | **Forbidden** for UI                                                                                                  |
-| Parity              | Official `fixtures.json` + ordinal HTML equality against backend output                                               |
-| Upstream            | Node package + Nunjucks / `template.njk` / fixtures (install/Sass/freshness — not required for non-Node request HTML) |
+| Layer               | Choice                                                                                                 |
+| ------------------- | ------------------------------------------------------------------------------------------------------ |
+| UI                  | GOV.UK Frontend only (`govuk-*`, official JS via `initAll()`)                                          |
+| HTML generation     | C# renderers that stay fixture-parity with Frontend `template.njk`                                     |
+| Frontend frameworks | **Forbidden** for UI                                                                                   |
+| Parity              | Official `fixtures.json` + ordinal HTML equality against backend output                                |
+| Upstream            | npm package + `template.njk` / fixtures (install, Sass, freshness). Request HTML is C#.                |
+| This repository     | C# / ASP.NET Core / .NET 10. Native renderers. See [`docs/tech-stack.md`](../../../docs/tech-stack.md) |
 
 ## Authoritative guidance (search these first)
 
@@ -61,12 +59,12 @@ Local index: [`docs/guidance-sources.md`](../../../docs/guidance-sources.md).
 
 ## Workflow reminders
 
-1. Confirm wrapper language in [`docs/tech-stack.md`](../../../docs/tech-stack.md) (prefer Nunjucks when viable).
+1. Follow the C# conventions in [`docs/tech-stack.md`](../../../docs/tech-stack.md).
 2. Never hand-paste `govuk-*` component HTML; use macros / library API.
 3. Upgrade only after reviewing the [latest release](https://github.com/alphagov/govuk-frontend/releases/latest).
 4. New components: [`docs/creating-components.md`](../../../docs/creating-components.md). Patterns: [`docs/creating-patterns.md`](../../../docs/creating-patterns.md).
 5. HTTP responses use [`baseline/`](../../../baseline/) — performance cache kinds and OWASP headers. Compress with Brotli (`br`); Gzip is only the fallback when the client does not advertise `br`. Playbooks: [`docs/frontend-performance.md`](../../../docs/frontend-performance.md), [`docs/frontend-security.md`](../../../docs/frontend-security.md). Language lines sync `baseline/`; they do not fork a weaker policy.
 6. Compile CSS via Sass (`styles/application.scss` → Frontend `@use` → `govuk-overrides.scss` last). Never use `!important` in service CSS. Playbook: [`docs/styles.md`](../../../docs/styles.md).
 7. Document every change for **humans and agents** in the same change set ([`docs/documentation-structure.md`](../../../docs/documentation-structure.md)). Update `/docs`, and `AGENTS.md` / skill / rules when contracts change.
-8. Follow the **latest** best practices for the wrapper language in [`docs/tech-stack.md`](../../../docs/tech-stack.md) (and current Node/ESM for shared tooling). Do not fossilise outdated patterns.
+8. Follow current ASP.NET Core practice in [`docs/tech-stack.md`](../../../docs/tech-stack.md) (and current Node/ESM for Sass and fixture tooling). Do not fossilise outdated patterns.
 9. When a coherent piece of work is finished, split it into focused commits with comprehensive messages — do not leave a large mixed working tree.

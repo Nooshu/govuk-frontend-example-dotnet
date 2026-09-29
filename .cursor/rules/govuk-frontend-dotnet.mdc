@@ -1,0 +1,390 @@
+---
+description: Build a GOV.UK Frontend compatible server-rendered implementation using C#, ASP.NET Core, and Razor
+alwaysApply: true
+---
+
+# Project goal
+
+Build a server-rendered UK government service using C#, ASP.NET Core, and Razor that produces HTML compatible with GOV.UK Frontend.
+
+This project demonstrates that GOV.UK Frontend does not require Nunjucks, Node.js, Blazor, or a client-side frontend framework.
+
+The authoritative compatibility contract is the expected HTML from the official GOV.UK Frontend fixtures for the exact GOV.UK Frontend version installed by this project.
+
+The objective is 100% fixture parity for every implemented component.
+
+## Architecture
+
+```text
+GOV.UK Frontend fixture
+        |
+        v
+C# component options
+        |
+        v
+Tag Helper / View Component / Razor
+        |
+        v
+Server-rendered HTML
+        |
+        v
+DOM comparison
+        |
+        v
+Expected GOV.UK Frontend HTML
+```
+
+Server-render the complete core experience.
+
+Use JavaScript only for progressive enhancement.
+
+## Technology stack
+
+Use:
+
+- current supported .NET
+- ASP.NET Core
+- Razor
+- Razor Pages or MVC
+- Tag Helpers
+- View Components where appropriate
+- xUnit
+- AngleSharp
+- YamlDotNet
+- FluentAssertions
+- Microsoft.AspNetCore.Mvc.Testing where HTTP integration testing is useful
+
+Enable nullable reference types.
+
+Use current stable supported packages unless explicitly pinned otherwise.
+
+## GOV.UK Frontend
+
+Install and pin an explicit GOV.UK Frontend version.
+
+GOV.UK Frontend is authoritative for:
+
+- component behaviour
+- component parameters
+- HTML
+- CSS
+- JavaScript
+- fonts
+- assets
+- accessibility markup
+- ARIA
+- data attributes
+
+Do not reimplement its CSS or client-side behaviour.
+
+## Fixture contract
+
+Use official fixtures belonging to the installed GOV.UK Frontend version.
+
+Before implementing a component:
+
+1. inspect all fixtures
+2. inspect expected HTML
+3. inspect the upstream Nunjucks implementation where useful
+4. understand the complete rendering behaviour
+5. design an idiomatic .NET API
+6. implement it
+7. run all applicable fixtures
+
+Nunjucks may be studied as a behavioural reference.
+
+It must not be part of production rendering.
+
+## Component architecture
+
+Use strongly typed C# option models.
+
+Prefer records for immutable data where appropriate.
+
+For example:
+
+```csharp
+public sealed record GovUkButtonOptions(
+    string? Text = null,
+    TrustedHtml? Html = null,
+    string Type = "submit",
+    string? Classes = null,
+    IReadOnlyDictionary<string, string>? Attributes = null
+);
+```
+
+Use enums only for genuinely closed sets.
+
+Do not expose Razor-specific implementation details through public component APIs.
+
+Components must be independently renderable without depending on controller business logic.
+
+Keep separate:
+
+- HTTP endpoints
+- application logic
+- component models
+- rendering
+- fixture mapping
+- fixture loading
+- DOM comparison
+- tests
+
+## Rendering abstraction
+
+Prefer the ASP.NET Core mechanism most appropriate to each component.
+
+Use Tag Helpers when a component naturally maps to HTML syntax.
+
+For example:
+
+```html
+<govuk-button type="submit">Continue</govuk-button>
+```
+
+Use View Components where rendering contains substantial nested structure or rendering logic.
+
+Use Razor partials where they provide the simplest appropriate solution.
+
+Do not force every GOV.UK component into one abstraction simply for architectural uniformity.
+
+Do not use Blazor to implement the component library.
+
+## Project structure
+
+Prefer a clear structure such as:
+
+```text
+GovUk/
+  Components/
+  TagHelpers/
+  Models/
+  Rendering/
+  Html/
+
+Views/
+  Shared/
+    Components/
+
+Tests/
+  Fixtures/
+  Components/
+  Rendering/
+```
+
+Adapt this where normal ASP.NET Core conventions provide a better structure.
+
+## Escaping and trusted HTML
+
+Use Razor's normal HTML encoding for plain text.
+
+GOV.UK `text` options must be escaped.
+
+GOV.UK `html` options require an explicit trusted HTML representation.
+
+Do not represent trusted and untrusted HTML identically if that creates an accidental injection risk.
+
+Avoid `Html.Raw()`.
+
+Where raw HTML is genuinely required, it must originate from an explicit trusted HTML API.
+
+Never pass arbitrary user input to `Html.Raw()`.
+
+Never weaken escaping to make a fixture pass.
+
+## Attributes
+
+Support arbitrary GOV.UK attributes where the upstream component supports them.
+
+Render attributes using framework-safe mechanisms rather than concatenating raw strings.
+
+Preserve:
+
+- IDs
+- names
+- values
+- classes
+- roles
+- ARIA
+- data attributes
+- boolean attributes
+- form semantics
+
+## Fixture testing
+
+Fixture tests must be data-driven.
+
+For each fixture:
+
+1. load upstream fixture data using YamlDotNet
+2. map fixture options to the local model
+3. render the component
+4. obtain expected GOV.UK HTML
+5. parse actual HTML with AngleSharp
+6. parse expected HTML
+7. compare meaningful DOM structures
+8. produce a useful failure diff
+
+Adding an upstream fixture should not normally require another bespoke test method.
+
+## HTML comparison
+
+Do not rely solely on raw string comparison.
+
+Use AngleSharp to parse HTML.
+
+Conservative normalisation may ignore genuinely irrelevant serialisation differences.
+
+It must not ignore:
+
+- element differences
+- ordering
+- text
+- classes
+- IDs
+- attributes
+- values
+- ARIA
+- data attributes
+- form behaviour
+- accessibility relationships
+
+Document normalisation rules.
+
+Test the comparator.
+
+When parity fails, assume rendering is incorrect before changing comparison behaviour.
+
+Do not loosen the comparator to increase the pass count.
+
+## Testing
+
+Use xUnit and FluentAssertions.
+
+Test:
+
+- every supported fixture
+- text escaping
+- trusted HTML
+- custom attributes
+- classes
+- IDs
+- ARIA
+- data attributes
+- errors
+- hints
+- nested content
+- form states
+- complex components
+
+Use `WebApplicationFactory` where full HTTP integration tests add value.
+
+## Forbidden shortcuts
+
+Never:
+
+- alter upstream fixtures
+- alter expected HTML
+- special-case fixture names
+- hard-code fixture output
+- copy expected HTML directly into components
+- weaken comparisons to hide differences
+- invoke Nunjucks at runtime
+- invoke Node.js to render production components
+- invoke another reference implementation at runtime
+- use Blazor for core component rendering
+- use React, Angular, Vue, Svelte, or another client-side framework for core markup
+- reimplement GOV.UK Frontend CSS
+- unnecessarily replace GOV.UK Frontend JavaScript
+
+Leave genuinely unsupported fixtures failing and document them.
+
+## Progressive enhancement
+
+The server response must contain the complete core experience.
+
+Use official GOV.UK Frontend JavaScript to enhance compatible server-rendered markup.
+
+JavaScript must not be used to repair incorrect Razor output.
+
+## Assets
+
+Use the official GOV.UK Frontend package for CSS, JavaScript, fonts, and assets.
+
+Pin its version.
+
+Make asset installation/building reproducible.
+
+## Dependency management
+
+Use normal .NET package management.
+
+Pin appropriate dependencies.
+
+Commit required lock/reproducibility files where the project uses them.
+
+Keep the dependency surface small.
+
+Run vulnerability checks where practical.
+
+## Quality
+
+Use:
+
+- nullable reference types
+- analyzers
+- `dotnet format`
+- dependency injection
+- records and immutable models where useful
+- async APIs where actually needed
+
+Avoid:
+
+- HTML string concatenation
+- widespread `Html.Raw()`
+- unnecessary service abstractions
+- excessive inheritance
+- unnecessary JavaScript
+- architecture copied from another stack
+
+## CI
+
+CI must:
+
+1. restore dependencies
+2. build
+3. run formatting/analyser checks
+4. run tests
+5. run all fixture parity tests
+
+Any parity failure must fail CI.
+
+## GOV.UK Frontend upgrades
+
+When upgrading:
+
+1. update the pinned GOV.UK Frontend version
+2. update to that version's fixtures
+3. run the entire fixture suite
+4. investigate differences
+5. modify the .NET implementation where upstream behaviour changed
+6. rerun all tests
+
+Never alter new fixtures to preserve the previous implementation.
+
+## Definition of done
+
+A component is complete only when:
+
+- it is server-rendered using ASP.NET Core/Razor
+- no Blazor or SPA framework is required
+- no Nunjucks runtime rendering exists
+- no Node.js runtime rendering exists
+- official GOV.UK assets are used
+- all supported fixtures pass
+- escaping and trusted HTML are tested
+- accessibility markup matches
+- no fixture hacks exist
+- CI passes
+
+Fixture parity, not visual similarity, defines compatibility.

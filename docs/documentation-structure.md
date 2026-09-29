@@ -12,7 +12,7 @@ Canonical agent index: [`AGENTS.md`](../AGENTS.md). Doc map: [`README.md`](READM
 4. **Skill + rules encode habits** — [`.cursor/skills/`](../.cursor/skills/) for workflows; [`.cursor/rules/`](../.cursor/rules/) for always-on consistency.
 5. **Official URLs win** — [guidance-sources.md](guidance-sources.md) before inventing policy.
 6. **No silent behaviour** — if code or config changes how someone builds, runs, secures, styles, or tests the service, docs change in the same change set.
-7. **Latest language practice** — document and implement the current best practices for the recorded wrapper language ([tech-stack.md](tech-stack.md)); do not fossilise outdated patterns.
+7. **Current .NET practice** — document and implement current ASP.NET Core practice ([tech-stack.md](tech-stack.md)); do not fossilise outdated patterns.
 
 ## Audience cues
 
@@ -20,7 +20,7 @@ Canonical agent index: [`AGENTS.md`](../AGENTS.md). Doc map: [`README.md`](READM
 | ------------------------------------------------------- | --------------------------------------- |
 | “Start here”, “Repo map”, “Troubleshooting”             | Human onboarding                        |
 | “Non-negotiables”, “Playbook”, “Do / don’t”, checklists | Agent-oriented (still useful to humans) |
-| “Stack note”, “TBD until language chosen”               | Applies to both; do not invent paths    |
+| “Stack note”                                            | C# / .NET conventions in tech-stack.md  |
 
 ## Mandatory documentation for every change
 
@@ -45,15 +45,13 @@ When editing docs:
 - Update [`docs/README.md`](README.md) whenever you add a new doc.
 - Run `npm run verify:docs` after substantive Markdown edits.
 
-## Latest language best practices
+## Current .NET practice
 
-Applies to this template’s shared Node tooling **and** to language-line / service repos that sync from it:
-
-1. Until [tech-stack.md](tech-stack.md) names a wrapper language: stay language-agnostic for app structure; still use current Node/ESM practice for `baseline/`, Sass scripts, and fixture tooling.
-2. After a language is recorded: follow **that language’s latest** layout, typing, module, test, packaging, and CI norms for **all** new feature work and refactors.
-3. Prefer official or widely accepted current guides over blog posts that predate the pin (for example current TypeScript / Go / Python docs for the major version you record).
-4. Do not adopt a “best practice” that conflicts with Frontend macros, fixture parity, the performance/security baseline, or the Sass cascade.
-5. When best practices change upstream, update tech-stack notes and code in focused commits — documentation and implementation together.
+1. Application code is C# on .NET 10. Follow current ASP.NET Core layout, nullable references, Razor Pages, tests, and CI for new work.
+2. Sass, the baseline header check, and fixture freshness stay on current Node/ESM.
+3. Prefer current Microsoft docs for .NET 10 over older blog posts.
+4. Do not adopt a “best practice” that conflicts with Frontend templates, fixture parity, the performance/security baseline, or the Sass cascade.
+5. When .NET practice changes, update tech-stack notes and code together.
 
 ## Suggested reading order
 
@@ -74,4 +72,4 @@ Applies to this template’s shared Node tooling **and** to language-line / serv
 
 ## Consistency tooling
 
-Dotfiles and shared tooling keep formatting and hygiene aligned — see [../CONTRIBUTING.md](../CONTRIBUTING.md#consistency-tooling-today). Document language-specific linters in [tech-stack.md](tech-stack.md) when the wrapper language is chosen.
+Dotfiles and shared tooling keep formatting and hygiene aligned — see [../CONTRIBUTING.md](../CONTRIBUTING.md#consistency-tooling-today). C# formatting is `dotnet format`, recorded in [tech-stack.md](tech-stack.md).

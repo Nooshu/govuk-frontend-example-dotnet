@@ -1,98 +1,108 @@
 # Tech stack
 
-**Status: TBD** (implementation language)
+**Status: C# / ASP.NET Core / .NET 10**
 
-The _example implementation_ language and its 2026 best-practice templating / component approach are not chosen yet. This file is the **single place** to record them when decided.
+This repository is the .NET example. GOV.UK Frontend stays the pinned Node package. Request HTML is native C#. Nunjucks is a behaviour reference and a fixture-freshness check only.
 
 ## Two layers
 
-| Layer                          | Stack                                                                                               | Notes                                                                                                                                      |
-| ------------------------------ | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **GOV.UK Frontend (upstream)** | **Node** package (`govuk-frontend`), **Nunjucks** macros (`template.njk`), official `fixtures.json` | Fixed by GDS. Always name Node/Nunjucks when discussing install, fixtures, macro options, escape behaviour, and verifying stored fixtures. |
-| **This template (wrapper)**    | TBD — e.g. TypeScript, Go, Python                                                                   | Server-side HTML tracking Frontend macros/`template.njk` (Nunjucks in-process only when Node-adjacent). **No** React/Vue/Angular/Svelte.   |
+| Layer                          | Stack                                                                                        | Notes                                                                                                                                    |
+| ------------------------------ | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **GOV.UK Frontend (upstream)** | **Node** package (`govuk-frontend` **6.5.1**), **Nunjucks** macros, official `fixtures.json` | Fixed by GDS. Use Node for install, Sass, fonts, and the freshness check.                                                                |
+| **This service**               | **C# / ASP.NET Core / .NET 10** (SDK `10.0.401`, `latestFeature` roll-forward)               | Razor Pages render HTML by calling the C# component library. **No** Blazor, React, Vue, Angular, or Svelte. **No** Node at request time. |
 
-## Rule for agents and humans
+## How the .NET code is organised
 
-Until an implementation language is recorded here: do not invent wrapper-specific paths, package managers, or framework idioms.
+Current SDK-style layout. Nullable reference types, implicit usings, file-scoped namespaces, central package management, analyzers, and warnings as errors.
 
-Once recorded: **every** feature request and code change must follow **that language’s latest best practices** for project layout, typing, modules, testing, packaging, and CI — while honouring Frontend’s fixture contract in [`AGENTS.md`](../AGENTS.md). Prefer current stable idioms for the recorded major version over outdated tutorials.
+| Path                                                                            | Role                                                                                            |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| [`src/GovUk.Frontend/`](../src/GovUk.Frontend/)                                 | Component library. One renderer per fixture-bearing component.                                  |
+| [`src/GovUk.Frontend.Example/`](../src/GovUk.Frontend.Example/)                 | Razor Pages host: layout, catalogue, fishing-rod-licence journey, baseline middleware, session. |
+| [`tests/GovUk.Frontend.Tests/`](../tests/GovUk.Frontend.Tests/)                 | Data-driven parity for every fixture, plus escape, attributes, and header tests.                |
+| [`tests/GovUk.Frontend.Example.Tests/`](../tests/GovUk.Frontend.Example.Tests/) | `WebApplicationFactory` coverage of the journey, catalogue, and headers.                        |
+| [`baseline/`](../baseline/)                                                     | Header and cache contract. The app loads [`baseline/policy.json`](../baseline/policy.json).     |
+| [`styles/`](../styles/)                                                         | Sass entry. Compiled CSS is fingerprinted into `wwwroot`.                                       |
 
-**HTML generation follows the wrapper language:**
+Solution: [`GovUk.Frontend.Example.slnx`](../GovUk.Frontend.Example.slnx). Packages: [`Directory.Packages.props`](../Directory.Packages.props). SDK pin: [`global.json`](../global.json).
 
-- **Node-adjacent stacks** (TypeScript on Node): calling Frontend’s **Nunjucks macros** in-process is fine — that is why the TypeScript line does it.
-- **Other languages** (Go, Python, …): generate component and page HTML **natively** in that language. Do **not** shell out to Node/Nunjucks for request-time rendering. Use the pinned package’s `template.njk` / macros as the behaviour reference, and prove **backend ≡ every fixture `html`**. Optional Node Nunjucks checks only prove fixtures are fresh.
+## HTML generation
 
-Still do **not** maintain hand-copied HTML dumps from each release as the long-term source.
+Renderers return a string. Pages pass options as a `JsonObject`. The library reads them through `ParamBag`, which keeps JSON key order, distinguishes missing values from JSON null, and follows JavaScript truthiness. That is the options model: a typed C# view of the Nunjucks macro options, not a hand-written HTML dump.
 
-Shared Node tooling in this repo (Sass pipeline, `baseline/`, docs scripts) already uses current ESM / Node 22+ practice; keep it that way.
+`TrustedHtml` is a different type from plain text. `text` options are escaped with the Nunjucks rules (`&#39;` for an apostrophe). `html` options are inserted only when they already come from a trusted fragment (another component, or fixture HTML). Do not pass user input to a raw HTML API.
 
-Document stack decisions and “how we write X here” notes in this file when the language is chosen, so humans and agents share one source of truth.
+Fixture tests call `ComponentCatalog.Render` in process. They assert ordinal string equality with the official fixture `html`. On failure, AngleSharp prints a DOM diff. Tests do not normalise HTML and do not edit fixture `html`.
 
-## Consistency tooling (today)
+`tests/govuk-fixtures/render-fixtures.mjs` re-renders every fixture with Nunjucks (`trimBlocks`, `lstripBlocks`, then trim) and compares it to stored `html`. That only proves the fixtures are fresh.
 
-While the wrapper language is TBD, Node tooling keeps docs and shared config consistent:
+## Assets, compression, and headers
+
+`npm run build:styles` compiles [`styles/application.scss`](../styles/application.scss). `node scripts/build-assets-cli.mjs` fingerprints that CSS, the `initAll()` module, and the GOV.UK fonts and images under `/assets/{hash}/`. The app serves those URLs as the `fingerprinted-asset` cache kind. The `js-enabled` snippet is the one-line script in [`baseline/policy.json`](../baseline/policy.json) so the CSP hash stays `sha256-GUQ5ad8JK5KmEWmROf3LZd9ge94daqNvd8xy9YS1iDw=`.
+
+ASP.NET middleware applies the same header map as `baseline/index.mjs`. `secureTransport` is true when the request is HTTPS or `X-Forwarded-Proto` is `https`. Response compression prefers Brotli and falls back to Gzip. Kestrel does not send `Server` or `X-Powered-By`.
+
+Generated files under `wwwroot/assets/` and `wwwroot/asset-manifest.json` are build output. Do not commit them.
+
+## Preview and the example journey
+
+The home page lists links only. `/components/{name}` lists every fixture, including hidden fixtures, and renders only the selected one with a parity banner. `/components/{name}/raw?fixture=` returns the fragment alone.
+
+Those routes stay on in every environment because this hosted site is the catalogue. A real service should limit them to Development.
+
+The fictional journey is `/apply`. Personal-data pages use the `sensitive-document` cache kind. See [fishing-rod-licence.md](fishing-rod-licence.md) and [hosting.md](hosting.md).
+
+## Commands
 
 ```sh
-npm install
-npm test          # baseline/ headers and cache policy; Sass pipeline
+npm ci
 npm run build:styles
-npm run verify    # docs + build:styles + tests
+npm test                 # baseline, Sass, asset fingerprint, Nunjucks freshness
+dotnet test              # fixture parity and the example host; 100% line, branch, and method coverage
+dotnet format --verify-no-changes
+npm run verify           # docs, Sass, Node tests
 ```
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md). Dotfiles: `.editorconfig`, `.prettierrc.json`, `.markdownlint-cli2.jsonc`, `.nvmrc`, `.vscode/`, `.cursor/rules/`, `.github/`. Record language-specific formatters in this file when chosen.
+`dotnet` must be the .NET 10 SDK (`export PATH="$HOME/.dotnet:$PATH"` when it is installed in the user profile). Coverage excludes generated Razor views (`*.cshtml`) and vendor assets. Settings: [`coverlet.library.runsettings`](../coverlet.library.runsettings) and [`coverlet.example.runsettings`](../coverlet.example.runsettings).
 
-## Shared baseline (language-agnostic)
+Local site:
 
-[`baseline/`](../baseline/) is part of this template’s contract. Language lines sync that directory with this repo.
+```sh
+dotnet run --project src/GovUk.Frontend.Example
+```
 
-| Piece                                             | Role                                                                                               |
-| ------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| [`baseline/policy.json`](../baseline/policy.json) | OWASP header values, CSP directives, cache kinds, performance budgets                              |
-| [`baseline/index.mjs`](../baseline/index.mjs)     | Node helpers: `buildResponseHeaders`, `applyResponseHeaders`, `buildSetCookie`, preload and `ETag` |
-| [`styles/`](../styles/)                           | Sass entry compiling Frontend via `@use`, then `govuk-overrides.scss` ([styles.md](styles.md))     |
+## Tests and coverage
 
-Node and TypeScript services call the helpers. Other languages implement the same `kind` values and header map, and test against the Node output. Production HTTPS passes `secureTransport: true`. Details: [frontend-performance.md](frontend-performance.md), [frontend-security.md](frontend-security.md).
+xUnit and FluentAssertions. Parity tests load `fixtures.json` with `System.Text.Json` from `node_modules/govuk-frontend/.../fixtures.json`. Set `GOVUK_COMPONENT=input` to run one component’s parity tests.
 
-Expect a **Node** dependency for installing `govuk-frontend`, compiling Sass, running shared baseline/docs tests, and (optionally) a Nunjucks freshness check — even when the wrapper is another language. That does **not** mean the Go/Python/… server should call Node to render HTML.
+Coverage gate:
 
-## When implementation language is confirmed, document
-
-- Language, runtime, and version policy
-- Templating approach: Nunjucks macros when the wrapper is Node-adjacent; otherwise native HTML generation in the wrapper language, with fixture parity documented
-- Package manager, lockfile, and how dependencies are pinned (including `govuk-frontend` via npm/Node)
-- How Frontend CSS/JS (and fonts) are installed and served: Sass compile of `styles/application.scss`, fingerprinted URL, `buildResponseHeaders` as `fingerprinted-asset`
-- How every HTTP response applies [`baseline/`](../baseline/) (`secureTransport: true` in production)
-- Shared HTML escape + attribute helpers matching **Nunjucks `escape`** when not invoking Nunjucks directly (see [creating-components.md](creating-components.md))
-- Fixture loader and preview / raw-fixture route conventions (extensive parity coverage)
-- Layout chrome helpers (skip link, header, service navigation, footer)
-- Test runner commands, **backend parity suite** over **all** fixtures (primary), **100%** coverage gate (functions / branches / statements), and **Nunjucks fixture-verification** scripts (Node, secondary)
-- Upgrade entrypoint — always review https://github.com/alphagov/govuk-frontend/releases/latest first; see [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)
-- Confirmation that no frontend UI framework is in the dependency tree for rendering
+```sh
+dotnet test tests/GovUk.Frontend.Tests/GovUk.Frontend.Tests.csproj --settings coverlet.library.runsettings
+dotnet test tests/GovUk.Frontend.Example.Tests/GovUk.Frontend.Example.Tests.csproj --settings coverlet.example.runsettings
+```
 
 ## Hard constraints (always)
 
-- GOV.UK Frontend pins a single version; CSS/JS and fixtures must match.
-- Prefer **Nunjucks macros** for component HTML; do not maintain copy-pasted HTML from each release.
-- Component options mirror Nunjucks macro options (`macro-options.json` / fixture `options`).
-- Backend output must pass extensive **100% HTML fixture parity** (byte-for-byte vs official fixture `html` for every fixture). Nunjucks-vs-fixture checks prove freshness only; they do not replace backend parity.
-- Compile CSS via Sass ([styles.md](styles.md)); `govuk-overrides.scss` last; never `!important` in service CSS.
+- GOV.UK Frontend pins a single version; CSS, JavaScript, and fixtures must match.
+- C# renderers track Nunjucks macros. Do not maintain copy-pasted HTML from each release, and do not shell out to Node to render a request.
+- Component options mirror Nunjucks macro options and fixture `options`.
+- Backend output must match every fixture `html` byte for byte. Nunjucks-vs-fixture checks prove freshness only.
+- Compile CSS via Sass ([styles.md](styles.md)); `govuk-overrides.scss` last; never `!important` in service CSS. Do not serve `govuk-frontend.min.css` as the stylesheet.
 - Patterns compose components; they are not new low-level components.
-- Wrapper structure/tooling follow the **chosen language’s best practices**; Frontend tooling stays Node/Nunjucks.
-- No frontend UI frameworks for GOV.UK chrome — see [project-purpose.md](project-purpose.md).
-- Coverage: **100%** functions, branches, statements — see [testing-components.md](testing-components.md).
+- No Blazor and no frontend UI framework for GOV.UK chrome.
+- Coverage: **100%** functions, branches, and statements for the library and the example host, excluding generated Razor views. See [testing-components.md](testing-components.md).
 - Before every Frontend upgrade: https://github.com/alphagov/govuk-frontend/releases/latest
 
-See [`AGENTS.md`](../AGENTS.md), [guidance-sources.md](guidance-sources.md), and [creating-components.md](creating-components.md).
+## Version pin
 
-## Placeholder version pin
-
-| Item                              | Value                                                                                                        |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Implementation language           | _TBD_                                                                                                        |
-| Templating / component approach   | _TBD — Nunjucks when Node-adjacent; native HTML elsewhere; always fixture-parity_                            |
-| `govuk-frontend` (Node)           | `6.5.1` — check [latest release](https://github.com/alphagov/govuk-frontend/releases/latest) before upgrades |
-| Sass pipeline                     | `styles/application.scss` → `npm run build:styles` → `dist/stylesheets/application.css`                      |
-| Nunjucks fixture verification     | _TBD — Node scripts under tests/_                                                                            |
-| Page template reference           | https://design-system.service.gov.uk/styles/page-template/                                                   |
-| Fixture testing guide             | https://frontend.design-system.service.gov.uk/testing-your-html/                                             |
-| Upgrade / test / preview commands | _TBD — list here when wired_                                                                                 |
+| Item                          | Value                                                                                                        |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Implementation language       | C# / ASP.NET Core / .NET 10                                                                                  |
+| Templating                    | Razor Pages call native C# renderers. Fixture options are a `ParamBag`.                                      |
+| `govuk-frontend` (Node)       | `6.5.1` — check [latest release](https://github.com/alphagov/govuk-frontend/releases/latest) before upgrades |
+| Sass pipeline                 | `styles/application.scss` → fingerprinted `/assets/{hash}.css`                                               |
+| Nunjucks fixture verification | `tests/govuk-fixtures/render-fixtures.mjs`                                                                   |
+| Page template reference       | https://design-system.service.gov.uk/styles/page-template/                                                   |
+| Fixture testing guide         | https://frontend.design-system.service.gov.uk/testing-your-html/                                             |
+| Run the example               | `dotnet run --project src/GovUk.Frontend.Example`                                                            |

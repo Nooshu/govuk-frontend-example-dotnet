@@ -2,16 +2,16 @@
 
 Solid, simple update plan for keeping this example on a current, fixture-matched GOV.UK Frontend release.
 
-**Goals:** mechanical sync where possible, exact HTML parity after every bump, no invented fixtures, macro-aligned renderers (Nunjucks or native) over pasted HTML, human visual QA at the end.
+**Goals:** mechanical sync where possible, exact HTML parity after every bump, no invented fixtures, C# renderers that track the Frontend templates, human visual QA at the end.
 
 ## Principles
 
 1. **One pinned version** — CSS, JS, and every `fixtures.json` come from the same `govuk-frontend` release.
 2. **Always read the latest release notes first** — https://github.com/alphagov/govuk-frontend/releases/latest (required before every upgrade).
 3. **Fixtures are sacred** — never edit fixture `html` to pass tests; never loosen string equality.
-4. **Prefer macros over pasted HTML** — keep generating UI via Nunjucks (or wrappers that track macros); do not refresh by copy-pasting HTML from release notes into templates.
+4. **Prefer the C# renderers over pasted HTML** — update those renderers from `template.njk`; do not refresh by copy-pasting HTML from release notes into pages.
 5. **Automate the boring parts** — download package, copy fixtures, refresh static assets, run parity suites.
-6. **Fix renderers / macro usage, not tests** — when HTML drifts, update how the backend invokes or mirrors macros.
+6. **Fix the C# renderers, not the tests** — when HTML drifts, update the renderer so it still matches the template.
 7. **Docs must track the pin** — search/replace the old version string across `/docs` and `AGENTS.md` after a successful upgrade.
 8. **Do not commit unless asked.**
 
@@ -34,9 +34,9 @@ Do **not** upgrade mid-feature unless required. **Always** open https://github.c
 
 ### 1. Mechanical sync
 
-**Wrapper automation is language-specific**; **Frontend install/fixtures/Nunjucks checks are Node**. Record concrete commands in [tech-stack.md](tech-stack.md) once the wrapper stack is chosen. Until then, treat the steps below as the required outcomes.
+C# renderers live in this repo. Installing `govuk-frontend`, refreshing fixtures, and the Nunjucks freshness check use Node. The commands are in [tech-stack.md](tech-stack.md).
 
-Whatever the wrapper tooling, an upgrade must (and will usually involve **Node**/npm for the Frontend package itself):
+An upgrade must:
 
 1. **Pin** `govuk-frontend@X.Y.Z` (npm/Node) in the project’s dependency / lock mechanism.
 2. **Publish Frontend assets** the app actually serves — CSS, JS, and fonts — so runtime assets match `X.Y.Z`.
@@ -44,9 +44,7 @@ Whatever the wrapper tooling, an upgrade must (and will usually involve **Node**
 4. **Keep a manifest of shipped components** in sync so the sync step knows which fixture sets to update.
 5. **Map upstream package names** to this repo’s names where they differ (e.g. Design System “Text input” ↔ upstream `input`).
 6. **Prefer a single entrypoint** that can dry-run, sync-only, or sync-then-verify — exact flags are stack-specific; Node scripts are the usual way to talk to `govuk-frontend`.
-7. **Run verification** after sync (fixture identity checks + **backend/library parity vs fixtures** + Nunjucks freshness suite).
-
-Implement these outcomes with the **chosen wrapper language’s best practices**, plus Node where Frontend requires it. Record the concrete entrypoint in [tech-stack.md](tech-stack.md).
+7. **Run verification** after sync (C# parity vs fixtures + the Nunjucks freshness suite).
 
 ### 2. Renderer / mapper fixes
 
@@ -54,7 +52,7 @@ If parity fails:
 
 - [ ] Diff failing fixture `html` vs renderer output (whitespace, attributes, encoding).
 - [ ] Re-read Nunjucks `template.njk` (+ imported macros) for the new version.
-- [ ] Update models only when macro options changed (idiomatic types for the wrapper language).
+- [ ] Update `ParamBag` handling only when template options changed.
 - [ ] Fix encoding via the shared helper that matches **Nunjucks** `escape` — not the framework default encoder if it differs.
 
 ### 3. Page template / layout
@@ -84,24 +82,24 @@ If the release adds a component you will ship:
 Report **done** only when:
 
 - [ ] Fixture copy / sync checks are green
-- [ ] **Backend / library parity** tests are green (renderer output ≡ every fixture `html`)
-- [ ] Nunjucks fixture verification (Node) is green (freshness only — not a substitute for backend parity)
+- [ ] **C# parity** tests are green (renderer output ≡ every fixture `html`)
+- [ ] Nunjucks fixture verification (Node) is green (freshness only — not a substitute for the C# comparison)
 - [ ] Config / CI verify gate is green
 
 Then list what still needs **human visual QA** (preview server — [preview-server.md](preview-server.md)): header/footer, focus states, a sample form with errors, and any components touched by the release notes.
 
 ## Hard rules
 
-| Do                                                                               | Don’t                                                                                                         |
-| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Read https://github.com/alphagov/govuk-frontend/releases/latest before upgrading | Skip the latest release notes                                                                                 |
-| Macro-aligned renderers (Nunjucks in-process or native wrapper HTML)             | Copy-paste HTML from release notes into templates; shell out to Node solely to render from a non-Node backend |
-| Summarise release notes before editing                                           | Edit fixture `html` to pass tests                                                                             |
-| Fix renderers/mappers/macro usage                                                | Add HTML normalisation in tests                                                                               |
-| Keep CSS/JS/fixtures on one version                                              | Mix Frontend versions                                                                                         |
-| Add new components only with official fixtures                                   | Hand-build unreleased GOV.UK chrome                                                                           |
-| Use shared escape/attribute helpers (or Nunjucks itself)                         | Invent ad-hoc CSS or `!important` “fixes”                                                                     |
-| Compile Frontend through Sass (`styles/` + `govuk-overrides.scss`)               | Ship `govuk-frontend.min.css` as the long-term CSS                                                            |
+| Do                                                                               | Don’t                                                                     |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Read https://github.com/alphagov/govuk-frontend/releases/latest before upgrading | Skip the latest release notes                                             |
+| C# renderers that track `template.njk`                                           | Copy-paste HTML from release notes; shell out to Node to render a request |
+| Summarise release notes before editing                                           | Edit fixture `html` to pass tests                                         |
+| Fix renderers/mappers/macro usage                                                | Add HTML normalisation in tests                                           |
+| Keep CSS/JS/fixtures on one version                                              | Mix Frontend versions                                                     |
+| Add new components only with official fixtures                                   | Hand-build unreleased GOV.UK chrome                                       |
+| Use the C# escape and attribute helpers                                          | Invent ad-hoc CSS or `!important` “fixes”                                 |
+| Compile Frontend through Sass (`styles/` + `govuk-overrides.scss`)               | Ship `govuk-frontend.min.css` as the long-term CSS                        |
 
 ## Cadence (recommended)
 

@@ -1,16 +1,16 @@
 # Project purpose
 
-This repository is a **base template** for creating **GDS-compliant** government frontends.
+This repository is a **C# / ASP.NET Core** example of a **GDS-compliant** government frontend.
 
 ## Intent
 
-Teams clone or fork this template to stand up services that:
+The example shows a service that:
 
-1. Meet [Service Standard](https://www.gov.uk/service-manual/service-standard) and [Technology Code of Practice](https://www.gov.uk/guidance/the-technology-code-of-practice) expectations for common components, accessibility, and open standards — as far as the UI layer can.
-2. Use a **standardised backend technology** for HTML generation and application logic — for example **TypeScript** (Node), **Go**, **Python**, or another agreed server-side language.
-3. Use **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned release) as the **only** frontend component library — styles, progressive-enhancement JS, and macro-driven HTML.
-4. Do **not** introduce SPA or component **frontend frameworks** (React, Vue, Angular, Svelte, Next.js UI layers, etc.) for rendering GOV.UK UI.
-5. Derive component HTML from **GOV.UK Frontend macros** / `template.njk` — Nunjucks in-process on Node-adjacent stacks; **native** HTML on other backends — never long-term copy-paste from each release — and wire **official test fixtures** for extensive **100% HTML parity** testing of backend output.
+1. Meets [Service Standard](https://www.gov.uk/service-manual/service-standard) and [Technology Code of Practice](https://www.gov.uk/guidance/the-technology-code-of-practice) expectations for common components, accessibility, and open standards — as far as the UI layer can.
+2. Uses **C# on .NET 10** for HTML generation and application logic.
+3. Uses **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned release) as the **only** frontend component library — styles, progressive-enhancement JS, and the HTML contract in `template.njk`.
+4. Does **not** introduce SPA or component **frontend frameworks** (React, Vue, Angular, Svelte, Next.js UI layers, Blazor, etc.) for rendering GOV.UK UI.
+5. Derives component HTML from the C# renderers that track **GOV.UK Frontend** `template.njk`, and wires **official test fixtures** for extensive **100% HTML parity** testing of that C# output.
 
 ## Priorities
 
@@ -22,7 +22,7 @@ Teams clone or fork this template to stand up services that:
 
 See [priorities.md](priorities.md).
 
-GOV.UK Frontend remains a **Node** package with **Nunjucks** macros upstream. See [tech-stack.md](tech-stack.md).
+The `govuk-frontend` package is installed with npm. Request HTML is C#. See [tech-stack.md](tech-stack.md).
 
 ## What “GDS compliant” means here
 

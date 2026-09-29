@@ -1,6 +1,6 @@
 # Frontend performance
 
-Shared performance baseline for this template and every language line that syncs from it. Cache and preload behaviour is enforced by [`baseline/`](../baseline/). Budgets and placement rules are in [`baseline/policy.json`](../baseline/policy.json).
+Performance baseline for this .NET example. Cache and preload behaviour is enforced by [`baseline/`](../baseline/). Budgets and placement rules are in [`baseline/policy.json`](../baseline/policy.json).
 
 Authoritative sources:
 

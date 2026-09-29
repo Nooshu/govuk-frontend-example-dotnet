@@ -1,17 +1,8 @@
 # GOV.UK Frontend example
 
-**Base template** for **GDS-compliant** government frontends: standardised backends (TypeScript, Go, Python, …) + **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (macros / fixtures as the HTML contract) — **no** React/Vue/Angular/Svelte for UI. Official fixtures enable **100% HTML parity** testing of backend output. Node-adjacent lines may call Nunjucks macros directly; other languages generate HTML natively.
+**C# / ASP.NET Core / .NET 10** example of a **GDS-compliant** government frontend. Razor Pages render HTML with a native C# port of **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/) 6.5.1**. **No** React, Vue, Angular, Svelte, or Blazor for UI, and **no** Node at request time. Official fixtures are the HTML contract: the C# renderers match every fixture `html`.
 
-**Implementation language: TBD** — see [`docs/tech-stack.md`](docs/tech-stack.md).
-
-## Language lines
-
-Specialised repos that track this template’s shared playbooks via a `template` remote + path sync:
-
-| Line              | Repository                                                                                              |
-| ----------------- | ------------------------------------------------------------------------------------------------------- |
-| TypeScript (Node) | [Nooshu/govuk-frontend-example-typescript](https://github.com/Nooshu/govuk-frontend-example-typescript) |
-| Go                | [Nooshu/govuk-frontend-example-go](https://github.com/Nooshu/govuk-frontend-example-go)                 |
+The site is a public demonstration. It includes a component catalogue and a **fictional** “Apply for a fishing rod licence” journey. It does not issue a real licence. Search engines are asked not to index it. See [`docs/tech-stack.md`](docs/tech-stack.md), [`docs/fishing-rod-licence.md`](docs/fishing-rod-licence.md), and [`docs/hosting.md`](docs/hosting.md).
 
 ## Priorities
 
@@ -26,13 +17,22 @@ Frontend web performance → frontend security → reduced maintenance → acces
 
 How docs are split for both audiences: [`docs/documentation-structure.md`](docs/documentation-structure.md).
 
-## Quick local checks (docs / Node tooling)
+## Run the example
 
 ```sh
-npm install
-npm run build:styles
-npm test
-npm run verify:docs
+npm ci
+dotnet run --project src/GovUk.Frontend.Example
+```
+
+Open `/` for the catalogue and `/apply` for the fictional licence journey. .NET 10 SDK is required.
+
+## Checks
+
+```sh
+npm run verify
+dotnet format GovUk.Frontend.Example.slnx --verify-no-changes
+dotnet test tests/GovUk.Frontend.Tests/GovUk.Frontend.Tests.csproj --settings coverlet.library.runsettings
+dotnet test tests/GovUk.Frontend.Example.Tests/GovUk.Frontend.Example.Tests.csproj --settings coverlet.example.runsettings
 ```
 
 ## Licence and security

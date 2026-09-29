@@ -8,7 +8,7 @@ Ship only the GOV.UK Frontend CSS and JS the page needs. Cache fingerprinted ass
 
 - No competing UI frameworks or heavy client bundles.
 - Prefer progressive enhancement and server-rendered HTML.
-- Prefer **Nunjucks macros** (or thin wrappers that call them) so you are not maintaining pasted HTML that bloats reviews and drifts between releases.
+- Render HTML in C# from the Frontend templates so reviews do not carry pasted HTML that drifts between releases.
 - Keep preview/debug assets off production layouts; measure asset size and init cost on Frontend upgrades.
 
 ## 2. Frontend security
@@ -23,10 +23,10 @@ Apply the OWASP response-header baseline on every response (CSP with the Fronten
 ## 3. Reduced maintenance
 
 - One pinned `govuk-frontend` version; CSS/JS/fixtures stay in lockstep.
-- Generate HTML from **Frontend macros** where possible — not by copy-pasting HTML from each release into templates.
-- Extensive **backend vs fixture** parity tests catch renderer drift early so upgrades are mechanical, not archaeological. Nunjucks-vs-fixture checks only prove fixtures are fresh.
+- Generate HTML from the C# renderers — not by copy-pasting HTML from each release into templates.
+- C# vs fixture parity tests catch renderer drift early so upgrades stay mechanical. The Nunjucks check only proves fixtures are fresh.
 - Watch roadmap/releases before inventing components ([govuk-frontend-roadmap.md](govuk-frontend-roadmap.md)).
-- Use the chosen language’s **latest** idiomatic tooling ([tech-stack.md](tech-stack.md)); automate sync; humans for visual QA.
+- Use current .NET tooling ([tech-stack.md](tech-stack.md)); automate the fixture check; leave visual QA to a person.
 - Keep **dual-audience documentation** current with every feature ([documentation-structure.md](documentation-structure.md)) so onboarding and agent sessions stay cheap.
 
 ## 4. Accessibility
