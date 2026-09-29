@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>GovUk.Frontend.Example</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="GovUk.Frontend.Example.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../GovUk.Frontend/GovUk.Frontend.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\baseline\policy.json" Link="baseline\policy.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <Target Name="BuildFrontendAssets" BeforeTargets="BeforeBuild" Condition="'$(SkipGovUkAssets)' != 'true'">
+    <Exec Command="node &quot;$(MSBuildThisFileDirectory)..\..\scripts\build-assets-cli.mjs&quot;" />
+  </Target>
+</Project>

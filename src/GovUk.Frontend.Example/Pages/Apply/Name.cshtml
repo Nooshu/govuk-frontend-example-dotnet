@@ -1,0 +1,40 @@
+@page "/apply/name"
+@model NameModel
+@{
+    ViewData["Title"] = "What is your full name?";
+    ViewData["BackLink"] = "/apply/length";
+}
+<form method="post" novalidate>
+@if (Model.Error is not null)
+{
+    @GovUkHtml.Component("error-summary", new System.Text.Json.Nodes.JsonObject
+    {
+        ["titleText"] = "There is a problem",
+        ["errorList"] = new System.Text.Json.Nodes.JsonArray
+        {
+            new System.Text.Json.Nodes.JsonObject { ["text"] = Model.Error, ["href"] = "#full-name" },
+        },
+    })
+}
+@{
+    var input = new System.Text.Json.Nodes.JsonObject
+    {
+        ["id"] = "full-name",
+        ["name"] = "fullName",
+        ["value"] = Model.FullName,
+        ["autocomplete"] = "name",
+        ["label"] = new System.Text.Json.Nodes.JsonObject
+        {
+            ["text"] = "What is your full name?",
+            ["isPageHeading"] = true,
+            ["classes"] = "govuk-label--l",
+        },
+    };
+    if (Model.Error is not null)
+    {
+        input["errorMessage"] = new System.Text.Json.Nodes.JsonObject { ["text"] = Model.Error };
+    }
+}
+@GovUkHtml.Component("input", input)
+@GovUkHtml.Component("button", new System.Text.Json.Nodes.JsonObject { ["text"] = "Continue" })
+</form>

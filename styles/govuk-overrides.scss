@@ -21,3 +21,21 @@
 :root {
   --app-stylesheet-layer: govuk-overrides;
 }
+
+// Fixture preview on /components/:name. The frame keeps the rendered component
+// separate from the parity banner and the versions list.
+.app-component-preview {
+  margin-top: govuk-spacing(6);
+  margin-bottom: govuk-spacing(6);
+}
+
+.app-component-preview__frame {
+  border: $govuk-border-width-form-element dotted $govuk-border-colour;
+  padding: govuk-spacing(4);
+}
+
+// Yellow stand-in for the blue notification banner, used for the live-demo warning.
+.govuk-notification-banner.app-demo-banner {
+  --_govuk-notification-banner-colour: #{govuk-colour('yellow')};
+  --_govuk-notification-banner-title-text-colour: #{govuk-colour('black')};
+}

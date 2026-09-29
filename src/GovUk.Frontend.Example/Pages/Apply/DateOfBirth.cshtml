@@ -1,0 +1,48 @@
+@page "/apply/date-of-birth"
+@model DateOfBirthModel
+@{
+    ViewData["Title"] = "What is your date of birth?";
+    ViewData["BackLink"] = "/apply/name";
+}
+<form method="post" novalidate>
+@if (Model.Error is not null)
+{
+    @GovUkHtml.Component("error-summary", new System.Text.Json.Nodes.JsonObject
+    {
+        ["titleText"] = "There is a problem",
+        ["errorList"] = new System.Text.Json.Nodes.JsonArray
+        {
+            new System.Text.Json.Nodes.JsonObject { ["text"] = Model.Error, ["href"] = "#date-of-birth-day" },
+        },
+    })
+}
+@{
+    var date = new System.Text.Json.Nodes.JsonObject
+    {
+        ["id"] = "date-of-birth",
+        ["namePrefix"] = "date-of-birth",
+        ["fieldset"] = new System.Text.Json.Nodes.JsonObject
+        {
+            ["legend"] = new System.Text.Json.Nodes.JsonObject
+            {
+                ["text"] = "What is your date of birth?",
+                ["isPageHeading"] = true,
+                ["classes"] = "govuk-fieldset__legend--l",
+            },
+        },
+        ["hint"] = new System.Text.Json.Nodes.JsonObject { ["text"] = "For example, 31 3 1980" },
+        ["items"] = new System.Text.Json.Nodes.JsonArray
+        {
+            new System.Text.Json.Nodes.JsonObject { ["name"] = "day", ["value"] = Model.Day },
+            new System.Text.Json.Nodes.JsonObject { ["name"] = "month", ["value"] = Model.Month },
+            new System.Text.Json.Nodes.JsonObject { ["name"] = "year", ["value"] = Model.Year },
+        },
+    };
+    if (Model.Error is not null)
+    {
+        date["errorMessage"] = new System.Text.Json.Nodes.JsonObject { ["text"] = Model.Error };
+    }
+}
+@GovUkHtml.Component("date-input", date)
+@GovUkHtml.Component("button", new System.Text.Json.Nodes.JsonObject { ["text"] = "Continue" })
+</form>

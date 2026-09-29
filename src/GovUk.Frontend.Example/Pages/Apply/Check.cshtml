@@ -1,0 +1,44 @@
+@page "/apply/check"
+@model CheckModel
+@{
+    ViewData["Title"] = "Check your answers";
+    ViewData["BackLink"] = "/apply/email";
+}
+<h1 class="govuk-heading-l">Check your answers</h1>
+@GovUkHtml.Component("summary-list", new System.Text.Json.Nodes.JsonObject
+{
+    ["rows"] = new System.Text.Json.Nodes.JsonArray
+    {
+        Row("Licence length", Model.LengthLabel, "/apply/length", "licence length"),
+        Row("Name", Model.FullName, "/apply/name", "name"),
+        Row("Date of birth", Model.DateOfBirth, "/apply/date-of-birth", "date of birth"),
+        Row("Where you will fish", Model.Country, "/apply/country", "where you will fish"),
+        Row("Email address", Model.Email, "/apply/email", "email address"),
+    },
+})
+<form method="post" novalidate>
+@GovUkHtml.Component("button", new System.Text.Json.Nodes.JsonObject { ["text"] = "Accept and continue" })
+</form>
+
+@functions {
+    private static System.Text.Json.Nodes.JsonObject Row(string key, string? value, string href, string hidden)
+    {
+        return new System.Text.Json.Nodes.JsonObject
+        {
+            ["key"] = new System.Text.Json.Nodes.JsonObject { ["text"] = key },
+            ["value"] = new System.Text.Json.Nodes.JsonObject { ["text"] = value },
+            ["actions"] = new System.Text.Json.Nodes.JsonObject
+            {
+                ["items"] = new System.Text.Json.Nodes.JsonArray
+                {
+                    new System.Text.Json.Nodes.JsonObject
+                    {
+                        ["href"] = href,
+                        ["text"] = "Change",
+                        ["visuallyHiddenText"] = hidden,
+                    },
+                },
+            },
+        };
+    }
+}
