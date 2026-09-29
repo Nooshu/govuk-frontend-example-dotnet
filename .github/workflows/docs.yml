@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  verify-docs:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,5 +14,11 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
       - run: npm ci
       - run: npm run verify
+      - run: dotnet format GovUk.Frontend.Example.slnx --verify-no-changes
+      - run: dotnet test tests/GovUk.Frontend.Tests/GovUk.Frontend.Tests.csproj --settings coverlet.library.runsettings
+      - run: dotnet test tests/GovUk.Frontend.Example.Tests/GovUk.Frontend.Example.Tests.csproj --settings coverlet.example.runsettings
