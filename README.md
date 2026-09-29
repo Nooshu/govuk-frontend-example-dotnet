@@ -21,7 +21,7 @@ How docs are split for both audiences: [`docs/documentation-structure.md`](docs/
 
 ```sh
 npm ci
-dotnet run --project src/GovUk.Frontend.Example
+npm start
 ```
 
 Open `/`. It redirects to `/apply`, the fictional licence start page. Open `/components` for the catalogue. .NET 10 SDK is required.

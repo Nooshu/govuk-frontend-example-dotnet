@@ -6,7 +6,7 @@ The Razor Pages app is the preview server and the public catalogue.
 
 ```sh
 npm ci
-dotnet run --project src/GovUk.Frontend.Example
+npm start
 ```
 
 The first build runs `node scripts/build-assets-cli.mjs`. .NET 10 SDK is required ([tech-stack.md](tech-stack.md)).
@@ -36,4 +36,4 @@ There is no syntax-highlighting asset on the layout.
 
 ## After code changes
 
-Restart `dotnet run` if the process does not reload, then hard-refresh the browser. After a Frontend upgrade, check focus states, the header and footer, a form with a validation error, and a hidden fixture ([upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)).
+Restart `npm start` if the process does not reload, then hard-refresh the browser. After a Frontend upgrade, check focus states, the header and footer, a form with a validation error, and a hidden fixture ([upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)).
