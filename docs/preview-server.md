@@ -1,21 +1,38 @@
 # Preview server
 
-Local server for human parity checks and pattern demos.
+The Razor Pages app is the preview server and the public catalogue.
 
-## Status
+## Run it
 
-**Commands TBD** until [tech-stack.md](tech-stack.md) is filled in. Document the idiomatic way to start the preview app for the chosen language there (task runner, CLI, IDE run config — whatever best practice for that stack is).
+```sh
+npm ci
+dotnet run --project src/GovUk.Frontend.Example
+```
 
-## Expectations
+The first build runs `node scripts/build-assets-cli.mjs`. .NET 10 SDK is required ([tech-stack.md](tech-stack.md)).
 
-- Homepage lists components (and patterns) as **links only** — no embedded live demos.
-- A preview surface per component renders **only the selected** fixture, with a parity banner vs official `html`.
-- A raw-fixture surface returns an HTML **fragment** for automation.
-- Preview and fixture surfaces are Development / Testing only.
-- Preview responses use the same [`baseline/`](../baseline/) headers as production. On local HTTP, pass `secureTransport: false` so HSTS is not sent.
-- Syntax highlighting (if any) loads on Previews only — never on the global layout.
-- Optional health / readiness endpoints follow the stack’s normal conventions; missing optional infra should not block Frontend-only preview.
+## Routes
+
+| URL                                         | What it shows                                                                                       |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `/`                                         | Links only: the example service, then one link per component. No embedded demos.                    |
+| `/apply`                                    | Fictional fishing-rod-licence journey. See [fishing-rod-licence.md](fishing-rod-licence.md).        |
+| `/components/{name}?fixture={fixture name}` | Every fixture for that component, including hidden fixtures. Only the selected fixture is rendered. |
+| `/components/{name}/raw?fixture={name}`     | The HTML fragment alone.                                                                            |
+| `/health`                                   | `ok` for the host health check.                                                                     |
+
+A component page uses the full width of the page. It shows the component’s name, a link to the Design System, the current fixture name, and a banner. The success text “The C# HTML is the same as the official fixture HTML.” is shown only when `ComponentCatalog.Render` returns the same string as that fixture’s `html`. The frame then shows that same string. The failure text is “The C# HTML is different from the official fixture HTML.” Under that, **Versions (Fixtures)** lists every fixture, including hidden ones, and marks the selected fixture with a Current tag.
+
+The page also shows a yellow Important banner, English and Cymraeg in the service navigation, a back link to the catalogue, and the demonstration phase banner. A real service should limit these preview routes to Development.
+
+## Where the routes run
+
+Preview and raw-fixture routes stay on in every environment, including Production, because the hosted site is the catalogue. A real service built from this example should register them only in Development.
+
+Responses use the same [`baseline/`](../baseline/) headers as the rest of the app. On local HTTP, HSTS is not sent. When `X-Forwarded-Proto` is `https`, HSTS is sent.
+
+There is no syntax-highlighting asset on the layout.
 
 ## After code changes
 
-Rebuild or reload as required by the language’s tooling; hard-refresh the browser. Confirm focus states, header/footer, and a failing-form example during visual QA after Frontend upgrades ([upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)).
+Restart `dotnet run` if the process does not reload, then hard-refresh the browser. After a Frontend upgrade, check focus states, the header and footer, a form with a validation error, and a hidden fixture ([upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)).

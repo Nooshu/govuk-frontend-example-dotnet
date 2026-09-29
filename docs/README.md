@@ -20,7 +20,9 @@ How we keep docs dual-purpose: [documentation-structure.md](documentation-struct
 | [priorities.md](priorities.md)                           | Ordered priorities                               |
 | [frontend-performance.md](frontend-performance.md)       | Caching, compression, asset placement, budgets   |
 | [frontend-security.md](frontend-security.md)             | OWASP response headers, CSP, cookies             |
-| [tech-stack.md](tech-stack.md)                           | Wrapper language (TBD) + Frontend Node/Nunjucks  |
+| [tech-stack.md](tech-stack.md)                           | C# / .NET 10 + Frontend Node/Nunjucks            |
+| [fishing-rod-licence.md](fishing-rod-licence.md)         | Fictional example journey                        |
+| [hosting.md](hosting.md)                                 | Docker image and Render blueprint                |
 | [guidance-sources.md](guidance-sources.md)               | Official GDS / Service Manual / Frontend URLs    |
 | [documentation-structure.md](documentation-structure.md) | Dual-audience docs + language practice rules     |
 | [CONTRIBUTING.md](../CONTRIBUTING.md)                    | How to contribute, local checks, PR expectations |
@@ -73,4 +75,4 @@ Agents should still open human-oriented docs when onboarding a teammate or expla
 
 ## Per-component docs
 
-Add `docs/govuk-<kebab-name>.md` when each component ships. Until then: [govuk-components.md](govuk-components.md) and the [Design System components](https://design-system.service.gov.uk/components/).
+One short doc per fixture-bearing component: `docs/govuk-<kebab-name>.md`. The index is [govuk-components.md](govuk-components.md).

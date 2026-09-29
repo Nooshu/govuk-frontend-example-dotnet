@@ -4,11 +4,11 @@ Human-oriented map of this repository. Coding agents should treat [`AGENTS.md`](
 
 ## What this repo is
 
-A **base template** for **GDS-compliant** frontends: backend languages (e.g. TypeScript, Go, Python) generate HTML; **GOV.UK Frontend** is the only UI library; **no frontend frameworks** for UI. Exact **HTML parity** against official Frontend fixtures. See [project-purpose.md](project-purpose.md).
+A **C# / ASP.NET Core** example of a **GDS-compliant** frontend. **GOV.UK Frontend** is the only UI library. **No** frontend frameworks and **no** Blazor for UI. Exact **HTML parity** against official Frontend fixtures. See [project-purpose.md](project-purpose.md) and [tech-stack.md](tech-stack.md).
 
-**Implementation language and templating stack are TBD.** Until confirmed, do not invent wrapper project paths or framework idioms beyond [tech-stack.md](tech-stack.md). Once chosen, organise the wrapper using that language’s **current best practices**.
+The application language is **C# on .NET 10**. New code follows current ASP.NET Core practice: SDK projects, nullable reference types, Razor Pages, and xUnit.
 
-**GOV.UK Frontend is Node + Nunjucks by default.** Install `govuk-frontend` from npm, treat Nunjucks `template.njk` / `fixtures.json` as the HTML contract, and keep Node scripts for refreshing and verifying fixtures — even if the wrapper is another language.
+Install `govuk-frontend` from npm. Treat its `template.njk` and `fixtures.json` as the HTML contract, and keep the Node scripts that refresh and verify those fixtures. The running site renders in C#.
 
 **Official guidance:** search the URLs in [guidance-sources.md](guidance-sources.md).
 
@@ -16,7 +16,7 @@ A **base template** for **GDS-compliant** frontends: backend languages (e.g. Typ
 
 **Documentation:** every lasting change is documented for **humans and agents** ([documentation-structure.md](documentation-structure.md)).
 
-**HTML:** prefer **Nunjucks macros** from `govuk-frontend`; set up official fixtures for extensive **100% parity** tests of backend output. Do not copy-paste component HTML from each release as the long-term approach. Before Frontend upgrades, always read https://github.com/alphagov/govuk-frontend/releases/latest.
+**HTML:** C# renderers track `govuk-frontend` templates. Official fixtures prove **100% parity** of that C# output. Do not copy-paste component HTML from each release as the long-term approach. Before Frontend upgrades, always read https://github.com/alphagov/govuk-frontend/releases/latest.
 
 ## Priorities
 
@@ -29,35 +29,31 @@ See [priorities.md](priorities.md). Short version: frontend web performance → 
 | **Component** | Design System building block (button, text input, …)                     | Library wrapper that renders exact Frontend HTML | **Yes** — official `fixtures.json`                                      |
 | **Pattern**   | Guidance for a journey or page composition (addresses, check answers, …) | Compose shipped components into pages            | **No** — follow Design System guidance; no invented pattern HTML suites |
 
-## Repo map (intended)
-
-Exact paths follow the chosen language’s conventions — record them in [tech-stack.md](tech-stack.md). Conceptually expect:
+## Repo map
 
 ```text
-AGENTS.md                 # Slim agent playbook
-docs/                     # All documentation (this folder)
-baseline/                 # Shared performance + OWASP header contract (sync to language lines)
-styles/                   # Sass entry + govuk-overrides (compiles to dist/stylesheets/)
-scripts/                  # Node build helpers (styles, future upgrade tooling)
-<src>/                    # App + component library (layout per language best practice)
-  …/govuk/…               # One unit per component + fixtures.json
-  …/layouts/…             # Page template / chrome
-  …/previews/…            # Dev-only parity browser per component
-  …/fixtures/…            # Dev-only raw HTML fragment endpoints
-tests/                    # Structural, parity (wrapper language), Nunjucks suite (Node)
-scripts/ or tasks/        # Frontend upgrade automation (often Node + wrapper tooling)
+AGENTS.md                          # Slim agent playbook
+docs/                              # All documentation (this folder)
+baseline/                          # Performance + OWASP header contract
+styles/                            # Sass entry + govuk-overrides
+scripts/                           # Node build helpers (styles and fingerprinted assets)
+src/GovUk.Frontend/                # C# component renderers
+src/GovUk.Frontend.Example/        # Razor Pages host, catalogue, fishing journey
+tests/GovUk.Frontend.Tests/        # Fixture parity
+tests/GovUk.Frontend.Example.Tests/ # HTTP tests for the journey and catalogue
+tests/govuk-fixtures/              # Nunjucks freshness check
 ```
 
-## Run modes (intended)
+## Run modes
 
-| Mode    | Purpose                                                                                   |
-| ------- | ----------------------------------------------------------------------------------------- |
-| Preview | Local server for component previews and pattern demos                                     |
-| Test    | Unit/parity tests (wrapper) + Nunjucks fixture verification (Node)                        |
-| Verify  | Config check + fixtures + full test suite (CI equivalent)                                 |
-| Upgrade | Mechanical Frontend bump — see [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md) |
+| Mode    | Command                                                                                                  |
+| ------- | -------------------------------------------------------------------------------------------------------- |
+| Preview | `dotnet run --project src/GovUk.Frontend.Example` — see [preview-server.md](preview-server.md)           |
+| Test    | `dotnet test` with the coverage settings in [tech-stack.md](tech-stack.md), plus `npm test`              |
+| Verify  | `npm run verify`, then `dotnet format --verify-no-changes` and the two `dotnet test --settings` commands |
+| Upgrade | [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)                                               |
 
-Command names for the _wrapper_ are stack-specific — document them in [tech-stack.md](tech-stack.md). Expect **Node**/npm for `govuk-frontend` install and the Nunjucks suite regardless.
+**Node** is still required to install `govuk-frontend`, compile Sass, and run the Nunjucks freshness check. The running site does not call Node.
 
 ## Testing mindset
 
@@ -65,7 +61,7 @@ Command names for the _wrapper_ are stack-specific — document them in [tech-st
 2. **Nunjucks suite (secondary)** compares Frontend macros to stored fixture `html` to catch **stale fixtures** only.
 3. **Never** edit fixture `html` to make tests pass — fix the renderer.
 4. **Never** normalise HTML in tests.
-5. A green Nunjucks suite alone does **not** prove the backend language is correct.
+5. A green Nunjucks suite alone does **not** prove the C# renderers are correct.
 
 Details: [testing-components.md](testing-components.md).
 
@@ -84,7 +80,7 @@ More pitfalls: [creating-components.md](creating-components.md).
 
 ## Consistency tooling (today)
 
-While the wrapper language is TBD, Node tooling keeps docs and shared config consistent:
+Node tooling keeps docs, Sass, and the fixture freshness check consistent:
 
 ```sh
 npm install

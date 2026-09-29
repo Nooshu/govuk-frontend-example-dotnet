@@ -2,7 +2,7 @@
 
 ## Source of truth
 
-[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/) **Nunjucks** macros and fixtures (Node package `govuk-frontend`). This repo re-implements the HTML contract in the **chosen wrapper language’s** idiomatic component / templating model so product pages never hand-write component markup. See [tech-stack.md](tech-stack.md).
+[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/) **Nunjucks** macros and fixtures (Node package `govuk-frontend` 6.5.1). This repo re-implements that HTML contract in C#. Pages call `GovUkHtml.Component`. See [tech-stack.md](tech-stack.md).
 
 ## Architecture (intended)
 
@@ -14,7 +14,7 @@ Page / pattern
         → Frontend CSS/JS in the page shell
 ```
 
-Supporting pieces (names/paths idiomatic for the wrapper language):
+Supporting pieces:
 
 - **Shared HTML helpers** — Nunjucks-compatible escape + attribute serialization.
 - **Fixture loader** — cached `fixtures.json` for Previews / Fixtures.
@@ -32,15 +32,55 @@ See [layout-chrome.md](layout-chrome.md), [creating-components.md](creating-comp
 | Implementation | Library wrappers + fixtures | Composed pages         |
 | Parity suite   | Required                    | Not applicable         |
 
-## Expected component set
+## Shipped component set
 
-Ship wrappers for Design System components that Frontend provides fixtures for, including (non-exhaustive): accordion, back link, breadcrumbs, button, character count, checkboxes, cookie banner, date input, details, error message, error summary, exit this page, fieldset, file upload, generic header, footer, header, inset text, notification banner, pagination, panel, password input, phase banner, radios, select, service navigation, skip link, summary list, table, tabs, tag, task list, text input, textarea, warning text.
+Every component directory in govuk-frontend 6.5.1 that contains `fixtures.json` has a renderer, a catalogue page, and a short doc:
 
-Per-component deep dives: add `docs/govuk-<kebab-name>.md` as each ships. Until then use the [Design System component pages](https://design-system.service.gov.uk/components/).
+| Component           | Doc                                                          |
+| ------------------- | ------------------------------------------------------------ |
+| Accordion           | [govuk-accordion.md](govuk-accordion.md)                     |
+| Back link           | [govuk-back-link.md](govuk-back-link.md)                     |
+| Breadcrumbs         | [govuk-breadcrumbs.md](govuk-breadcrumbs.md)                 |
+| Button              | [govuk-button.md](govuk-button.md)                           |
+| Character count     | [govuk-character-count.md](govuk-character-count.md)         |
+| Checkboxes          | [govuk-checkboxes.md](govuk-checkboxes.md)                   |
+| Cookie banner       | [govuk-cookie-banner.md](govuk-cookie-banner.md)             |
+| Date input          | [govuk-date-input.md](govuk-date-input.md)                   |
+| Details             | [govuk-details.md](govuk-details.md)                         |
+| Error message       | [govuk-error-message.md](govuk-error-message.md)             |
+| Error summary       | [govuk-error-summary.md](govuk-error-summary.md)             |
+| Exit this page      | [govuk-exit-this-page.md](govuk-exit-this-page.md)           |
+| Feedback            | [govuk-feedback.md](govuk-feedback.md)                       |
+| Fieldset            | [govuk-fieldset.md](govuk-fieldset.md)                       |
+| File upload         | [govuk-file-upload.md](govuk-file-upload.md)                 |
+| Footer              | [govuk-footer.md](govuk-footer.md)                           |
+| Generic header      | [govuk-generic-header.md](govuk-generic-header.md)           |
+| Header              | [govuk-header.md](govuk-header.md)                           |
+| Hint                | [govuk-hint.md](govuk-hint.md)                               |
+| Inset text          | [govuk-inset-text.md](govuk-inset-text.md)                   |
+| Label               | [govuk-label.md](govuk-label.md)                             |
+| Language navigation | [govuk-language-navigation.md](govuk-language-navigation.md) |
+| Notification banner | [govuk-notification-banner.md](govuk-notification-banner.md) |
+| Pagination          | [govuk-pagination.md](govuk-pagination.md)                   |
+| Panel               | [govuk-panel.md](govuk-panel.md)                             |
+| Password input      | [govuk-password-input.md](govuk-password-input.md)           |
+| Phase banner        | [govuk-phase-banner.md](govuk-phase-banner.md)               |
+| Radios              | [govuk-radios.md](govuk-radios.md)                           |
+| Select              | [govuk-select.md](govuk-select.md)                           |
+| Service navigation  | [govuk-service-navigation.md](govuk-service-navigation.md)   |
+| Skip link           | [govuk-skip-link.md](govuk-skip-link.md)                     |
+| Summary list        | [govuk-summary-list.md](govuk-summary-list.md)               |
+| Table               | [govuk-table.md](govuk-table.md)                             |
+| Tabs                | [govuk-tabs.md](govuk-tabs.md)                               |
+| Tag                 | [govuk-tag.md](govuk-tag.md)                                 |
+| Task list           | [govuk-task-list.md](govuk-task-list.md)                     |
+| Text input          | [govuk-input.md](govuk-input.md)                             |
+| Textarea            | [govuk-textarea.md](govuk-textarea.md)                       |
+| Warning text        | [govuk-warning-text.md](govuk-warning-text.md)               |
 
 ## Previews
 
-Each component gets a Dev/Testing preview surface listing fixtures and rendering the selection with a parity banner. Index/home lists links only — **no live demos on the homepage**.
+Each component has a catalogue page listing every fixture, including hidden fixtures, and rendering only the selected fixture with a parity banner. The home page lists links only — **no live demos on the homepage**. Routes stay available in every environment for this demonstration. A real service should limit them to Development. See [preview-server.md](preview-server.md).
 
 ## Do not
 

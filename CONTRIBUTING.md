@@ -5,35 +5,33 @@ Thanks for helping maintain this **GDS-compliant frontend** template. This guide
 ## Before you start
 
 1. Read [`docs/project-purpose.md`](docs/project-purpose.md) and [`docs/onboarding.md`](docs/onboarding.md).
-2. Confirm the wrapper language status in [`docs/tech-stack.md`](docs/tech-stack.md).
+2. Read the .NET conventions in [`docs/tech-stack.md`](docs/tech-stack.md).
 3. Prefer official guidance listed in [`docs/guidance-sources.md`](docs/guidance-sources.md).
 4. Priorities: frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design.
 
 ## Non-negotiables (short)
 
 - GOV.UK Frontend only for UI — **no** React/Vue/Angular/Svelte (etc.).
-- Prefer **Nunjucks macros** over copy-pasted HTML from releases.
-- Official fixtures for **100% HTML parity** of **backend** output vs every fixture `html`; never edit fixture `html` to pass tests. Nunjucks-only checks are not enough.
+- C# renderers track Frontend templates. Do not copy-paste HTML from releases.
+- Official fixtures for **100% HTML parity** of **C#** output vs every fixture `html`; never edit fixture `html` to pass tests. The Nunjucks check is freshness only.
 - **100%** code coverage (functions, branches, statements) when application code exists.
 - Before upgrading Frontend, read https://github.com/alphagov/govuk-frontend/releases/latest.
 - Document every change for **humans and agents** ([docs/documentation-structure.md](docs/documentation-structure.md)).
-- Follow the **latest** best practices for the language in [docs/tech-stack.md](docs/tech-stack.md).
+- Follow current ASP.NET Core practice in [docs/tech-stack.md](docs/tech-stack.md).
 
 Full list: [`AGENTS.md`](AGENTS.md).
 
-## Consistency tooling (today)
-
-While the wrapper language is TBD, Node tooling keeps docs and the shared performance/security baseline consistent:
+## Consistency tooling
 
 ```sh
-npm install
-npm run build:styles # Sass → dist/stylesheets/application.css
-npm test             # baseline/ + styles pipeline — 100% lines, branches, functions
-npm run verify:docs  # format:check + lint:md
-npm run verify       # verify:docs + build:styles + test
+npm ci
+npm run verify       # docs, Sass, Node tests (baseline, assets, Nunjucks freshness)
+dotnet format GovUk.Frontend.Example.slnx --verify-no-changes
+dotnet test tests/GovUk.Frontend.Tests/GovUk.Frontend.Tests.csproj --settings coverlet.library.runsettings
+dotnet test tests/GovUk.Frontend.Example.Tests/GovUk.Frontend.Example.Tests.csproj --settings coverlet.example.runsettings
 ```
 
-When the wrapper language is chosen, add its format/lint/test/coverage commands to [`docs/tech-stack.md`](docs/tech-stack.md) and wire them into CI.
+Details and the .NET 10 pin: [`docs/tech-stack.md`](docs/tech-stack.md). CI is [`.github/workflows/docs.yml`](.github/workflows/docs.yml).
 
 ### Dotfiles (do not bypass)
 

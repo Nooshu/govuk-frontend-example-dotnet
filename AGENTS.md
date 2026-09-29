@@ -9,9 +9,9 @@
 
 # GOV.UK Frontend example
 
-**Base template** for **GDS-compliant** government frontends: standardised **backend** languages (e.g. TypeScript, Go, Python) generate HTML; **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned version) is the **only** UI component library. **No frontend frameworks** (React, Vue, Angular, Svelte, etc.) for UI.
+**C# / ASP.NET Core / .NET 10** example of a **GDS-compliant** government frontend. Razor Pages render HTML. **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned version) is the **only** UI component library. **No frontend frameworks** (React, Vue, Angular, Svelte, etc.) for UI, and **no** Blazor for component HTML.
 
-All component HTML should track **GOV.UK Frontend macros** / `template.njk` — Nunjucks in-process on Node-adjacent stacks; **native** HTML generation on Go, Python, and other backends (do not shell out to Node just to render). Never long-term copy-paste release HTML. Official **test fixtures** from each Frontend release are the contract: the **backend language’s HTML** must match every fixture `html` byte-for-byte. A Nunjucks-only check is not enough.
+C# renderers track **GOV.UK Frontend** `template.njk`. Do not shell out to Node to render a request, and do not copy-paste release HTML as the long-term source. Official **test fixtures** are the contract: C# HTML must match every fixture `html` byte-for-byte. The Nunjucks check only proves those fixtures are still fresh.
 
 **LIVE guidance** — [Design System feedback](https://design-system.service.gov.uk/community/feedback/).
 
@@ -36,13 +36,13 @@ Details: [`docs/priorities.md`](docs/priorities.md).
 | Dual-audience docs map    | [`docs/documentation-structure.md`](docs/documentation-structure.md), [`docs/README.md`](docs/README.md)                |
 | Project purpose           | [`docs/project-purpose.md`](docs/project-purpose.md)                                                                    |
 | Official guidance URLs    | [`docs/guidance-sources.md`](docs/guidance-sources.md)                                                                  |
-| Stack / language (TBD)    | [`docs/tech-stack.md`](docs/tech-stack.md)                                                                              |
+| Stack / language          | C# / ASP.NET Core / .NET 10 — [`docs/tech-stack.md`](docs/tech-stack.md)                                                |
 
-**Language rule:** Before an _implementation_ stack is recorded, stay agnostic about that wrapper language. After it is recorded, **every** feature and code change must follow that language’s **latest** best practices (project layout, typing, modules, tests, packaging, CI, lint) — without weakening the non-negotiables below. Prefer current stable idioms over outdated patterns. Record stack-specific conventions in [`docs/tech-stack.md`](docs/tech-stack.md).
+**Language rule:** This repository is C# on .NET 10. Every feature and code change follows current ASP.NET Core practice (SDK projects, nullable reference types, Razor Pages, xUnit) without weakening the non-negotiables below. Record stack conventions in [`docs/tech-stack.md`](docs/tech-stack.md).
 
-**HTML generation:** On **Node-adjacent** stacks (e.g. TypeScript), calling Frontend’s Nunjucks macros in-process is appropriate. On **other** stacks (Go, Python, …), generate HTML **natively** in that language — do not require Node at request time for rendering. Always track Frontend’s macros/`template.njk` as the behaviour reference and prove backend ≡ fixtures. Never long-term copy-paste static HTML from each release.
+**HTML generation:** Render component HTML in C#. Do not call Node while serving a request. Track Frontend `template.njk` as the behaviour reference and prove C# HTML ≡ fixtures. Do not keep a long-term copy of static HTML from each release.
 
-**GOV.UK Frontend’s own stack:** Frontend ships as a **Node** package with **Nunjucks** macros, official `fixtures.json`, and `template.njk` sources. Use Node for install, fixtures, Sass, and optional Nunjucks freshness checks. Refer to Nunjucks for macro options and escape behaviour even when the wrapper reimplements them.
+**GOV.UK Frontend package:** Frontend ships as an npm package with Nunjucks templates, official `fixtures.json`, and `template.njk` sources. Use Node to install that package, compile Sass, and run the freshness check. Request HTML stays in C#.
 
 **Guidance rule:** Prefer searching the URLs in [`docs/guidance-sources.md`](docs/guidance-sources.md) over inventing local policy.
 
@@ -50,8 +50,8 @@ Details: [`docs/priorities.md`](docs/priorities.md).
 
 ## Non-negotiables
 
-1. **GOV.UK Frontend macros are the HTML source of truth** — render via Nunjucks macros on Node-adjacent stacks, or via a native wrapper renderer that tracks those macros. Do **not** copy-paste component HTML from release notes or the Design System site as the long-term approach, and do **not** shell out to Node just to render HTML from a non-Node backend.
-2. **Backend HTML must match every official fixture** — for each shipped component, the **backend language’s rendered HTML** (TypeScript, Go, Python, …) is compared byte-for-byte to the `html` in that release’s `fixtures.json`, for **every** fixture. That is the primary parity gate. A Nunjucks-only check (macro output vs stored `html`) proves fixtures are fresh; it does **not** replace backend vs fixture comparison. No normalisation; never edit fixture `html` to pass tests. See [`docs/testing-components.md`](docs/testing-components.md).
+1. **GOV.UK Frontend templates are the HTML source of truth** — C# renderers track those templates. Do **not** copy-paste component HTML from release notes or the Design System site as the long-term approach, and do **not** shell out to Node to render a request.
+2. **C# HTML must match every official fixture** — for each shipped component, the C# HTML is compared byte-for-byte to the `html` in that release’s `fixtures.json`, for **every** fixture. That is the primary parity gate. The Nunjucks check proves fixtures are fresh; it does **not** replace the C# comparison. No normalisation; never edit fixture `html` to pass tests. See [`docs/testing-components.md`](docs/testing-components.md).
 3. **No frontend UI frameworks** — no React/Vue/Angular/Svelte (or similar) for GOV.UK UI; backend + GOV.UK Frontend only.
 4. **No ad-hoc custom CSS** — ship styles through the Sass pipeline in [`styles/`](styles/) (`application.scss` → GOV.UK Frontend `@use` → [`govuk-overrides.scss`](styles/govuk-overrides.scss) last). Prefer component options and Design System patterns; do not paste or serve Frontend’s prebuilt `govuk-frontend.min.css` as the long-term source. See [`docs/styles.md`](docs/styles.md).
 5. **No `!important` in service CSS** — overrides must win with cascade order and specificity only. This applies to every project using this template. Frontend’s own `govuk-!-…` utilities are upstream; do not copy that pattern into service styles.
@@ -62,32 +62,33 @@ Details: [`docs/priorities.md`](docs/priorities.md).
 10. **Do not ship unreleased GOV.UK chrome** — wait for Frontend release + fixtures. See [`docs/govuk-frontend-roadmap.md`](docs/govuk-frontend-roadmap.md).
 11. **100% code coverage** — functions, branches, and statements at **100%** for application/library code under test; CI must fail below that. Do not weaken fixture HTML equality to chase coverage. See [`docs/testing-components.md`](docs/testing-components.md).
 12. **Always review the latest release notes** before upgrading — https://github.com/alphagov/govuk-frontend/releases/latest — then follow [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md).
-13. **Performance and security baseline** — every response uses [`baseline/`](baseline/) (cache kind, OWASP headers, CSP hash for the `js-enabled` snippet). Language lines sync that directory; they do not invent a weaker set. See [`docs/frontend-performance.md`](docs/frontend-performance.md) and [`docs/frontend-security.md`](docs/frontend-security.md).
+13. **Performance and security baseline** — every response uses [`baseline/`](baseline/) (cache kind, OWASP headers, CSP hash for the `js-enabled` snippet). Do not invent a weaker set. Every response also sends `X-Robots-Tag: noindex, nofollow`, and HTML pages include the matching robots meta tag. See [`docs/frontend-performance.md`](docs/frontend-performance.md) and [`docs/frontend-security.md`](docs/frontend-security.md).
 14. **Split finished work into focused commits** — once a coherent piece of code or docs is complete, create **specific** commits with **comprehensive** messages (why, contract impact, how to verify). Do not leave a large mixed working tree; do not squash unrelated concerns into one commit. This applies to agents and humans using this template.
 15. **Document every change for humans and agents** — no feature, prompt-driven change, or behaviour lands without dual-audience docs updated in the right place (`/docs` detail, `AGENTS.md` / skill / rules links when contracts change, onboarding or CONTRIBUTING when workflow changes). Aim for easier onboarding and maintenance. See [`docs/documentation-structure.md`](docs/documentation-structure.md).
-16. **Follow the latest language best practices** — once [`docs/tech-stack.md`](docs/tech-stack.md) records a wrapper language, all new and changed code must match that language’s current best practices (not outdated tutorials). Shared Node tooling (Sass, baseline, fixtures) follows current Node/ESM practice. Never weaken Frontend, parity, security, or performance non-negotiables to chase a fad.
+16. **Follow current .NET practice** — new and changed C# matches current ASP.NET Core practice recorded in [`docs/tech-stack.md`](docs/tech-stack.md). Shared Node tooling (Sass, baseline, fixtures) follows current Node/ESM practice. Never weaken Frontend, parity, security, or performance non-negotiables to chase a fad.
 
 Using this repo does **not** make a service assessment-ready. See [`docs/service-assessment-readiness.md`](docs/service-assessment-readiness.md).
 
 ## Agent playbooks
 
-| Task                                | Doc                                                                    |
-| ----------------------------------- | ---------------------------------------------------------------------- |
-| Upgrade GOV.UK Frontend             | [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md) |
-| Add a component                     | [`docs/creating-components.md`](docs/creating-components.md)           |
-| Add a pattern                       | [`docs/creating-patterns.md`](docs/creating-patterns.md)               |
-| Layout / chrome                     | [`docs/layout-chrome.md`](docs/layout-chrome.md)                       |
-| Fixture / parity testing            | [`docs/testing-components.md`](docs/testing-components.md)             |
-| Page shell                          | [`docs/page-shell.md`](docs/page-shell.md)                             |
-| Frontend performance                | [`docs/frontend-performance.md`](docs/frontend-performance.md)         |
-| Frontend security                   | [`docs/frontend-security.md`](docs/frontend-security.md)               |
-| Accessibility                       | [`docs/accessibility.md`](docs/accessibility.md)                       |
-| Content & forms                     | [`docs/content-and-forms.md`](docs/content-and-forms.md)               |
-| Design tokens (colour, type, space) | [`docs/design-tokens.md`](docs/design-tokens.md)                       |
-| Styles / Sass cascade               | [`docs/styles.md`](docs/styles.md)                                     |
-| Dual-audience documentation         | [`docs/documentation-structure.md`](docs/documentation-structure.md)   |
-| Guidance sources                    | [`docs/guidance-sources.md`](docs/guidance-sources.md)                 |
-| Authoritative links                 | [`docs/authoritative-references.md`](docs/authoritative-references.md) |
+| Task                                | Doc                                                                                                |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Upgrade GOV.UK Frontend             | [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md)                             |
+| Add a component                     | [`docs/creating-components.md`](docs/creating-components.md)                                       |
+| Add a pattern                       | [`docs/creating-patterns.md`](docs/creating-patterns.md)                                           |
+| Layout / chrome                     | [`docs/layout-chrome.md`](docs/layout-chrome.md)                                                   |
+| Fixture / parity testing            | [`docs/testing-components.md`](docs/testing-components.md)                                         |
+| Example journey and host            | [`docs/fishing-rod-licence.md`](docs/fishing-rod-licence.md), [`docs/hosting.md`](docs/hosting.md) |
+| Page shell                          | [`docs/page-shell.md`](docs/page-shell.md)                                                         |
+| Frontend performance                | [`docs/frontend-performance.md`](docs/frontend-performance.md)                                     |
+| Frontend security                   | [`docs/frontend-security.md`](docs/frontend-security.md)                                           |
+| Accessibility                       | [`docs/accessibility.md`](docs/accessibility.md)                                                   |
+| Content & forms                     | [`docs/content-and-forms.md`](docs/content-and-forms.md)                                           |
+| Design tokens (colour, type, space) | [`docs/design-tokens.md`](docs/design-tokens.md)                                                   |
+| Styles / Sass cascade               | [`docs/styles.md`](docs/styles.md)                                                                 |
+| Dual-audience documentation         | [`docs/documentation-structure.md`](docs/documentation-structure.md)                               |
+| Guidance sources                    | [`docs/guidance-sources.md`](docs/guidance-sources.md)                                             |
+| Authoritative links                 | [`docs/authoritative-references.md`](docs/authoritative-references.md)                             |
 
 ## Quick page review
 
@@ -104,10 +105,11 @@ Before finishing a page change:
 - [ ] No `!important` in service styles; overrides only via `govuk-overrides.scss` specificity
 - [ ] Pattern guidance followed; out-of-scope widgets called out with inset text
 - [ ] Coverage remains 100% functions / branches / statements for touched library code
-- [ ] Backend parity suite green: library/backend HTML ≡ every fixture `html` (not only Nunjucks ≡ fixtures)
+- [ ] C# parity suite green: library HTML ≡ every fixture `html` (the Nunjucks check is freshness only)
 - [ ] Fixture parity still green for any touched components
 - [ ] Dual-audience docs updated (humans in `/docs` or CONTRIBUTING; agents via `AGENTS.md` / skill / playbook links if contracts changed)
-- [ ] Code follows the recorded language’s latest best practices ([`docs/tech-stack.md`](docs/tech-stack.md))
+- [ ] Code follows current .NET practice ([`docs/tech-stack.md`](docs/tech-stack.md))
+- [ ] HTML responses include `noindex, nofollow`; every response sends `X-Robots-Tag`
 
 ## Watching upstream
 

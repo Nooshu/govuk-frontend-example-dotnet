@@ -41,7 +41,7 @@ Out of scope (report upstream or to the consuming service):
 
 This template prioritises **frontend security** (see [`docs/priorities.md`](docs/priorities.md)):
 
-- Prefer GOV.UK Frontend **Nunjucks macros** and fixture-compatible encoding; do not bypass escaping
+- Render with the C# components and fixture-compatible encoding; do not bypass escaping
 - Treat component `html` options as untrusted until sanitised; prefer `text`
 - Do not add SPA/frontend frameworks that expand client attack surface for GOV.UK UI
 - Keep `govuk-frontend` pinned and review https://github.com/alphagov/govuk-frontend/releases/latest before upgrading
@@ -49,7 +49,7 @@ This template prioritises **frontend security** (see [`docs/priorities.md`](docs
 
 ## Dependencies
 
-Run `npm audit` (and the wrapper language’s equivalent once chosen) as part of routine maintenance. Dependabot is configured for npm and GitHub Actions where enabled.
+Run `npm audit` and `dotnet list package --vulnerable` as part of routine maintenance. Dependabot is configured for npm and GitHub Actions where enabled.
 
 ## Licence
 

@@ -1,6 +1,6 @@
 # Frontend security
 
-Shared OWASP response-header baseline for this template and every language line that syncs from it. The machine-readable contract is [`baseline/policy.json`](../baseline/policy.json). Node services call [`baseline/index.mjs`](../baseline/index.mjs). Other languages apply the same rules and can diff their headers against the Node helper.
+OWASP response-header baseline for this .NET example. The machine-readable contract is [`baseline/policy.json`](../baseline/policy.json). The ASP.NET app applies it in `BaselineHeadersMiddleware`. [`baseline/index.mjs`](../baseline/index.mjs) is the Node check that the same contract still holds.
 
 Authoritative sources:
 
@@ -11,18 +11,21 @@ Authoritative sources:
 
 Performance cache rules live in [frontend-performance.md](frontend-performance.md). Encoding and `html` options stay in [priorities.md](priorities.md) and [creating-components.md](creating-components.md).
 
-## Language lines
+## How headers are applied
 
-Sync the whole `baseline/` directory with this repo. Do not fork a weaker header set in the language line.
+Keep [`baseline/policy.json`](../baseline/policy.json) as the contract. Do not fork a weaker header set in the ASP.NET middleware.
 
-| Stack                      | How to apply it                                                                                                    |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Node (TypeScript included) | `import { applyResponseHeaders } from './baseline/index.mjs'` on every response                                    |
-| Any other language         | Read `baseline/policy.json` and match `buildResponseHeaders`. Use the Node helper as the oracle when you add tests |
+`BaselineHeadersMiddleware` calls `BaselinePolicy.BuildResponseHeaders` on every response. The Node helper is the oracle for that contract:
 
 ```sh
 node --input-type=module -e "import { buildResponseHeaders } from './baseline/index.mjs'; console.log(JSON.stringify(buildResponseHeaders({ kind: 'document', secureTransport: true }), null, 2))"
 ```
+
+## Search indexing
+
+This demonstration must not appear in search results. Every response, including HTML, assets, `/health`, and raw fixture fragments, sends `X-Robots-Tag: noindex, nofollow`. HTML layouts also include `<meta name="robots" content="noindex, nofollow">`.
+
+`/robots.txt` allows crawling (`Disallow:` with an empty path). Blocking the whole site in `robots.txt` would stop crawlers from seeing `noindex`, and the URL could still be listed. The header is what asks engines to drop the page.
 
 ## Response kinds
 

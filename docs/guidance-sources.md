@@ -73,12 +73,12 @@ From [Assisted digital support: an introduction](https://www.gov.uk/service-manu
 - Components and patterns: https://design-system.service.gov.uk/
 - Technical install, Nunjucks, fixture HTML testing, browsers: https://frontend.design-system.service.gov.uk/
 - **Latest Frontend release (always before upgrading):** https://github.com/alphagov/govuk-frontend/releases/latest
-- Track Frontend macros/`template.njk` for component HTML (Nunjucks when Node-adjacent; native elsewhere); extensive fixture parity for backend output
+- Track Frontend `template.njk` in the C# renderers; prove fixture parity for that C# HTML
 - Local playbooks: [creating-components.md](creating-components.md), [testing-components.md](testing-components.md), [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)
 
 ## How agents should use this list
 
 1. Open or search the relevant URL for the question.
 2. Apply the guidance to the **backend + GOV.UK Frontend** shape of this template (no competing UI frameworks).
-3. Record wrapper-specific decisions in [tech-stack.md](tech-stack.md).
+3. Record .NET decisions in [tech-stack.md](tech-stack.md).
 4. Keep [`AGENTS.md`](../AGENTS.md) slim — put lasting detail under `/docs`.
