@@ -223,6 +223,12 @@ public class ExampleAppTests : IClassFixture<WebApplicationFactory<Program>>
         var client = _factory.CreateClient();
         var help = await client.GetStringAsync("/help");
         Assert.Contains("Help", help, StringComparison.Ordinal);
+        var about = await client.GetStringAsync("/about");
+        Assert.Contains("About this example", about, StringComparison.Ordinal);
+        var examples = await client.GetStringAsync("/examples");
+        Assert.Contains("Example pages", examples, StringComparison.Ordinal);
+        Assert.Contains("Component catalogue", examples, StringComparison.Ordinal);
+        Assert.Contains("href=\"/examples\"", examples, StringComparison.Ordinal);
         var fallback = await client.GetStringAsync("/example-section");
         Assert.Contains("This example", fallback, StringComparison.Ordinal);
     }

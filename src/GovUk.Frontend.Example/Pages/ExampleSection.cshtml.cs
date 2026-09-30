@@ -12,6 +12,7 @@ public class ExampleSectionModel : PageModel
         "guidance",
         "cookies",
         "accessibility",
+        "about",
     ];
 
     private static readonly Dictionary<string, string> Titles = new(StringComparer.Ordinal)
@@ -22,6 +23,7 @@ public class ExampleSectionModel : PageModel
         ["guidance"] = "Guidance",
         ["cookies"] = "Cookies",
         ["accessibility"] = "Accessibility",
+        ["about"] = "About this example",
     };
 
     public string Heading { get; private set; } = "";

@@ -1,0 +1,15 @@
+@page "/examples"
+@model ExamplesModel
+@{
+    ViewData["Title"] = "Example pages";
+    ViewData["Breadcrumbs"] = new System.Text.Json.Nodes.JsonArray
+    {
+        new System.Text.Json.Nodes.JsonObject { ["text"] = "Home", ["href"] = "/apply" },
+        new System.Text.Json.Nodes.JsonObject { ["text"] = "Example pages" },
+    };
+}
+<h1 class="govuk-heading-l">Example pages</h1>
+<p class="govuk-body">These pages show GOV.UK patterns that are not steps in the rod licence application.</p>
+<ul class="govuk-list">
+    <li><a class="govuk-link" href="/components/exit-this-page">Exit this page</a></li>
+</ul>

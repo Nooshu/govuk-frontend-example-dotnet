@@ -151,39 +151,32 @@
             </div>
         </main>
     </div>
-    @if (catalogue || serviceHome)
+    @if (serviceHome)
     {
-        if (serviceHome)
+        @GovUkHtml.Component("feedback", new System.Text.Json.Nodes.JsonObject
         {
-            @GovUkHtml.Component("feedback", new System.Text.Json.Nodes.JsonObject
-            {
-                ["titleText"] = "Help us improve this service",
-                ["html"] = "<p class=\"govuk-body\">This example does not send feedback. <a class=\"govuk-link\" href=\"/help\">Get help with this example</a>.</p>",
-            })
-        }
-        @GovUkHtml.Component("footer", new System.Text.Json.Nodes.JsonObject
-        {
-            ["meta"] = new System.Text.Json.Nodes.JsonObject
-            {
-                ["items"] = new System.Text.Json.Nodes.JsonArray
-                {
-                    new System.Text.Json.Nodes.JsonObject { ["href"] = "/help", ["text"] = "Help" },
-                    new System.Text.Json.Nodes.JsonObject { ["href"] = "/fees", ["text"] = "Licence fees" },
-                    new System.Text.Json.Nodes.JsonObject { ["href"] = "/updates", ["text"] = "Service updates" },
-                    new System.Text.Json.Nodes.JsonObject { ["href"] = "/guidance", ["text"] = "Guidance" },
-                    new System.Text.Json.Nodes.JsonObject { ["href"] = "/cookies", ["text"] = "Cookies" },
-                    new System.Text.Json.Nodes.JsonObject { ["href"] = "/accessibility", ["text"] = "Accessibility" },
-                    new System.Text.Json.Nodes.JsonObject { ["href"] = "/", ["text"] = "About this example" },
-                    new System.Text.Json.Nodes.JsonObject { ["href"] = "/components", ["text"] = "Component catalogue" },
-                    new System.Text.Json.Nodes.JsonObject { ["href"] = "/", ["text"] = "Example pages" },
-                },
-            },
+            ["titleText"] = "Help us improve this service",
+            ["html"] = "<p class=\"govuk-body\">This example does not send feedback. <a class=\"govuk-link\" href=\"/help\">Get help with this example</a>.</p>",
         })
     }
-    else
+    @GovUkHtml.Component("footer", new System.Text.Json.Nodes.JsonObject
     {
-        @GovUkHtml.Component("footer")
-    }
+        ["meta"] = new System.Text.Json.Nodes.JsonObject
+        {
+            ["items"] = new System.Text.Json.Nodes.JsonArray
+            {
+                new System.Text.Json.Nodes.JsonObject { ["href"] = "/help", ["text"] = "Help" },
+                new System.Text.Json.Nodes.JsonObject { ["href"] = "/fees", ["text"] = "Licence fees" },
+                new System.Text.Json.Nodes.JsonObject { ["href"] = "/updates", ["text"] = "Service updates" },
+                new System.Text.Json.Nodes.JsonObject { ["href"] = "/guidance", ["text"] = "Guidance" },
+                new System.Text.Json.Nodes.JsonObject { ["href"] = "/cookies", ["text"] = "Cookies" },
+                new System.Text.Json.Nodes.JsonObject { ["href"] = "/accessibility", ["text"] = "Accessibility" },
+                new System.Text.Json.Nodes.JsonObject { ["href"] = "/about", ["text"] = "About this example" },
+                new System.Text.Json.Nodes.JsonObject { ["href"] = "/components", ["text"] = "Component catalogue" },
+                new System.Text.Json.Nodes.JsonObject { ["href"] = "/examples", ["text"] = "Example pages" },
+            },
+        },
+    })
     <script type="module" src="@Assets.Script"></script>
 </body>
 </html>
