@@ -1,5 +1,16 @@
 # GOV.UK Frontend example
 
+> [!WARNING]
+> 🚨 **Example repository only**
+>
+> This repository was created as a demonstration and will not be actively maintained or supported. It is not an official UK government project and is not endorsed, maintained, or supported by any UK government department, the Government Digital Service (GDS), or the GOV.UK Design System team.
+>
+> You are welcome to fork this repository and adapt, use, and maintain it within your own department or organisation. However, I will not be providing ongoing maintenance, updates, security fixes, or technical support.
+>
+> Use this code at your own risk. You are responsible for reviewing, testing, securing, maintaining, and ensuring the suitability of the code before using it in any service or production environment. I accept no responsibility or liability for any loss, damage, security issue, service failure, or other consequence resulting from its use.
+>
+> This repository is released under the MIT Licence. See the [LICENSE](LICENSE) file for the full licence terms.
+
 **C# / ASP.NET Core / .NET 10** example of a **GDS-compliant** government frontend. Razor Pages render HTML with a native C# port of **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/) 6.5.1**. **No** React, Vue, Angular, Svelte, or Blazor for UI, and **no** Node at request time. Official fixtures are the HTML contract: the C# renderers match every fixture `html`.
 
 The site is a public demonstration. It includes a component catalogue and a **fictional** “Apply for a fishing rod licence” journey. It does not issue a real licence. Search engines are asked not to index it. See [`docs/tech-stack.md`](docs/tech-stack.md), [`docs/fishing-rod-licence.md`](docs/fishing-rod-licence.md), and [`docs/hosting.md`](docs/hosting.md).
