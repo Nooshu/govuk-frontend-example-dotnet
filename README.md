@@ -6,15 +6,19 @@
 > This includes using and adapting it within your department, organisation, or project.
 
 > [!WARNING]
-> 🚨 **Example repository only**
+> ### 🚨 Example repository only
 >
-> This repository was created as a demonstration and will not be actively maintained or supported. It is not an official UK government project and is not endorsed, maintained, or supported by any UK government department, the Government Digital Service (GDS), or the GOV.UK Design System team.
+> This repository is a **demonstration only**. It will not be actively maintained or supported.
 >
-> I will not be providing ongoing maintenance, updates, security fixes, or technical support.
+> **It is not an official UK government project.** It is not endorsed, maintained, or supported by any UK government department, the Government Digital Service (GDS), or the GOV.UK Design System team.
 >
-> Use this code at your own risk. You are responsible for reviewing, testing, securing, maintaining, and ensuring the suitability of the code before using it in any service or production environment. I accept no responsibility or liability for any loss, damage, security issue, service failure, or other consequence resulting from its use.
+> **No ongoing support or updates will be provided.** This includes maintenance, dependency updates, security fixes, or technical support.
 >
-> This repository is released under the MIT Licence. See the [LICENSE](LICENSE) file for the full licence terms.
+> **Use this code at your own risk.** You are responsible for reviewing, testing, securing, and maintaining the code, and for determining whether it is suitable for use in a service or production environment.
+>
+> **You are free to fork, modify, and maintain this repository for your own use.**
+>
+> This repository is released under the [MIT Licence](LICENSE). See the licence for the full terms.
 
 **C# / ASP.NET Core / .NET 10** example of a **GDS-compliant** government frontend. Razor Pages render HTML with a native C# port of **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/) 6.5.1**. **No** React, Vue, Angular, Svelte, or Blazor for UI, and **no** Node at request time. Official fixtures are the HTML contract: the C# renderers match every fixture `html`.
 
