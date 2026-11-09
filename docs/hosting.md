@@ -1,6 +1,6 @@
 # Hosting
 
-This example is prepared for a container host such as [Render](https://render.com/). The repository does not create a Render account and does not deploy the site.
+This example runs as a container on [Cloud Run](https://cloud.google.com/run/docs). See [deploying-on-cloud-run.md](deploying-on-cloud-run.md).
 
 ## What the image does
 
@@ -12,11 +12,11 @@ This example is prepared for a container host such as [Render](https://render.co
 
 The runtime image also contains the pinned `govuk-frontend` package so the catalogue can read `fixtures.json`. `GOVUK_FRONTEND_ROOT` points at that copy. [`baseline/policy.json`](../baseline/policy.json) is published next to the app.
 
-## Render
+## Cloud Run
 
-[`render.yaml`](../render.yaml) is a Docker web service on Render’s **free** plan (`plan: free`: 512 MB RAM, 0.1 CPU). Create it with **New → Blueprint** and select this repository, or create a web service by hand and choose **Free**. Leave `PORT` unset. Render sets it. The app listens on `0.0.0.0:$PORT` and trusts `X-Forwarded-Proto` (and `X-Forwarded-For`) from the platform proxy, including unknown proxy addresses, because Render’s edge is not in Kestrel’s default known-proxy list.
+[`scripts/deploy-cloud-run.sh`](../scripts/deploy-cloud-run.sh) builds this image with Cloud Build and deploys it. Leave `PORT` unset in the Dockerfile. Cloud Run sets it. The app listens on `0.0.0.0:$PORT` and trusts `X-Forwarded-Proto` (and `X-Forwarded-For`) from the platform proxy, including unknown proxy addresses, because Cloud Run’s edge is not in Kestrel’s default known-proxy list.
 
-A free instance spins down after 15 minutes without traffic. The next request waits while the process starts, often about a minute. The filesystem is ephemeral, and the fishing-rod journey stores answers in memory, so a spin-down or restart clears that session.
+With `MIN_INSTANCES=0` the service scales to zero. The next request waits while the process starts. The filesystem is ephemeral, and the fishing-rod journey stores answers in memory, so a restart clears that session.
 
 The site opens on the fishing-rod start page: `GET /` and `HEAD /` redirect to `/apply`. The component catalogue remains at `/components`.
 

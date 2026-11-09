@@ -26,4 +26,5 @@ COPY --from=assets /src/node_modules/govuk-frontend /govuk-frontend
 ENV GOVUK_FRONTEND_ROOT=/govuk-frontend
 ENV ASPNETCORE_ENVIRONMENT=Production
 EXPOSE 8080
+# Cloud Run injects PORT. The app binds http://0.0.0.0:$PORT.
 ENTRYPOINT ["dotnet", "GovUk.Frontend.Example.dll"]
